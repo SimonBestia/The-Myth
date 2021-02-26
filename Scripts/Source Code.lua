@@ -18,7 +18,6 @@ MissionSetup = function()
 		StartH, StartM = ClockGet()
 
 	--Audio stuff:
-		--SoundDisableSpeech() --Removes peds' voices
 		SoundDisableSpeech_ActionTree() --This disables lines that a ped might say on its own (Like idle quotes), useful to avoid situations where a ped interrupts itself just to play a quote
 
 	--Setup Player:
