@@ -1,6 +1,10 @@
 --[[The Myth
---Special Thanks to DeadpoolXYZ and Derpy54320 for helping with the mod!
+	*By SimonBestia
+		*Special Thanks to deadpoolXYZ and Derpy54320 for helping with the mod!
 ]]
+
+--Debug-related
+SkipText = false
 
 
 --Main Script
@@ -14,18 +18,18 @@ MissionSetup = function()
 		StartH, StartM = ClockGet()
 
 	--Audio stuff:
-		SoundDisableSpeech() --Removes peds' voices
+		--SoundDisableSpeech() --Removes peds' voices
 		SoundDisableSpeech_ActionTree() --This disables lines that a ped might say on its own (Like idle quotes), useful to avoid situations where a ped interrupts itself just to play a quote
 
 	--Setup Player:
 		PlayerWeaponHudLock(true) --Removes the abilty to scroll through weapons
 		PlayerSetControl(0) --Disables the player's movement
-		PlayerUnequip() --Self explanatory
+		PlayerUnequip() --Self-explanatory
 
 	--HUD:
 		ToggleHUDComponentVisibility(0, false) --Doesn't show the troublemeter
 		F_ToggleHudElements(false) --Custom function
-		PauseGameClock() --Self explanatory, also removes its HUD
+		--PauseGameClock() --Self-explanatory, also removes its HUD
 
 		--ForceStartMission("6_B") --Use on PS2 ONLY, to load the roof (causes crashes in case of death)
 
@@ -37,8 +41,8 @@ ActualMissionSetup = function()
 		F_LoadAnims() --Custom function
 
 	--Audio stuff:
-		SoundLoadBank("MISSION\\1_09.bnk") --Loads a specific .SEA file
-		SoundLoadBank("MISSION\\1_B.bnk")
+		SoundLoadBank("1_09.bnk") --Loads a specific .SEA file
+		SoundLoadBank("1_B.bnk")
 
 	--DAT stuff:
 		DATLoad("The_Myth.DAT", 2) --This loads a custom .dat file inside Trigger.img, the game can load custom .dat files
@@ -75,6 +79,7 @@ YouShallNotPlay = function()
 			PedSetFlag(gPlayer, 108, true) --for a list of known flags, check: https://bully-board.com/index.php?topic=22454.0
 			StopAmbientPedAttacks()
 			SetAmbientPedsIgnoreStimuli(true)
+			PlayerSetPosXYZ(-508.4071, 323.8752, 31.4087)
 			CameraSetXYZ(-509.18, 324.39, 32.91, -506.99, 322.07, 32.57) --Places the camera at the first 3 coordinates and makes it look at the last 3 coordinates
 		elseif AreaGetVisible() == 57 then --Dropouts safehouse
 			CameraSetXYZ(-659.83, 243.90, 16.72, -656.90, 246.53, 16.01)
@@ -90,13 +95,13 @@ YouShallNotPlay = function()
 
 	Wait(300)
 
-		ExecuteActionNode(gPlayer, "/Global/1_11X2/Failure", "Act/Conv/1_11X2.act") --Makes a ped play a specific animation
+		ExecuteActionNode(gPlayer, "/Global/1_11X2/Failure", "1_11X2.act") --Makes a ped play a specific animation
 		TextPrintString("You have to unlock Blue Skies first!", 2.5, 1) --Makes text appear on the screen. ("TEXT", seconds, type of text. [2 is small text, 1 is big text])
 		SoundPlayStream("MS_MissionEnd01.rsm", MUSIC_DEFAULT_VOLUME) --Plays a music
 
 	Wait(3000)
 
-		MissionFail() --Self explanatory
+		MissionFail() --Self-explanatory
 
 	Wait(4000)
 
@@ -106,6 +111,7 @@ Intro = function()
 
 	Wait(100)
 
+		AreaDisableCameraControlForTransition(true) --Disables the automatic camera fade-in when using areatransitionxyz
 		AreaTransitionXYZ(0, 181.85, -73.12, 46.54) --Changes player position to a different area and different coordinates (AreaCode, X,Y,Z)
 		PedFaceXYZ(gPlayer, 180.10, -73.04, 46.64)
 		Gary = PedCreateXYZ(130, 180.10, -73.04, 46.64) --Creates a ped called Gary (PedID, X,Y,Z)
@@ -113,6 +119,7 @@ Intro = function()
 		SoundPlayStream("MS_FinalShowdown03Low.rsm", MUSIC_DEFAULT_VOLUME)
 		CameraSetXYZ(180.38, -70.53, 47.67, 182.07, -75.43, 47.25)
 		AreaOverridePopulation(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) --Disables population (Check PedPop.DAT to see how it works)
+		BeamCola = PickupCreateXYZ(362, 204.171005, -78.838600, 35.724098, 1, 0, "HealthBute")
 
 		--Roof bells and stuff, copy-pasted from 6_B.lua 'cause I'm lazy
 		PAnimSetActionNode("SCBell2", 197.15899658203, -73.444702148438, 46.459701538086, 1, "/Global/SCBELL/Idle/IdleAnimationChooser/animstart2", "Act/Props/SCBell.act")
@@ -137,37 +144,32 @@ Intro = function()
 
 	Wait(200)
 
-		PedSetActionNode(gPlayer, "/Global/2_08Conv/Taunt/TauntPlayer", "Act/Conv/2_08.act")
-		PedSetActionNode(Gary, "/Global/Ambient/MissionSpec/FireMan/LookAround", "Act/Conv/Ambient.act")
-		TextPrintString("Jimmy: Nowhere to run now, eh, Gary?", 3, 2)
-		
-	Wait(3000)
-		
+		CameraFade(500, 1)
+		AreaDisableCameraControlForTransition(false) --Enables the automatic camera fade-in again
+		PedSetActionNode(gPlayer, "/Global/2_08Conv/Taunt/TauntPlayer", "2_08.act")
+		PedSetActionNode(Gary, "/Global/Ambient/MissionSpec/FireMan/LookAround", "Ambient.act")
+		F_TextPrint("Jimmy: Nowhere to run now, eh, Gary?", 3, 3000, 2)
 		CameraSetXYZ(181.68, -71.02, 47.27, 180.04, -75.31, 47.44)
-		PedSetActionNode(Gary, "/Global/1_07/GoingDown", "Act/Conv/1_07.act")
-		TextPrintString("Gary: GO TO HELL, JIMMY!", 2, 2)
-		
-	Wait(2000)
-		
+		PedSetActionNode(Gary, "/Global/1_07/GoingDown", "1_07.act")
+		F_TextPrint("Gary: GO TO HELL, JIMMY!", 2, 2000, 2)
 		SoundPlayStream("MS_FinalShowdown03Mid.rsm", MUSIC_DEFAULT_VOLUME)
 		PedLockTarget(Gary, gPlayer) --Makes a ped target another ped, required for some attacks to work
-		PedSetActionNode(Gary, "/Global/G_Johnny/Cinematic/ThroatGrab", "Act/Conv/G_Johnny.act")
+		PedSetActionNode(Gary, "/Global/G_Johnny/Cinematic/ThroatGrab", "G_Johnny.act")
 		Wait(100)
 		repeat --This is a loop, it will keep looping until Gary is not performing Johnny's throat grab attack, then moves on
 		Wait(0)
-		until not PedIsPlaying(Gary, "/Global/G_Johnny/Cinematic/ThroatGrab", "Act/Conv/G_Johnny.act", true)
+		until not PedIsPlaying(Gary, "/Global/G_Johnny/Cinematic/ThroatGrab", "G_Johnny.act", true)
 		GameSetPedStat(Gary, 20, 150) --Sets a ped's speed (PEDID, statID, amount)
 		PedMoveToXYZ(Gary, 2, 182.16, -67.50, 26.10) --Moves a ped (Ped, walk/run/sprint, x,y,z) walk, run, sprint = 0, 1, 2, 3
 		
 	Wait(2000)
 
-		PedDelete(Gary) --Self explanatory
-		PedSetActionNode(gPlayer, "/Global/G_Johnny/Cinematic/Jimmy/BellyUp/BellyUpGetUp/BellyUpGetUpGetUp", "Act/Conv/G_Johnny.act")
+		PedDelete(Gary) --Self-explanatory
+		PedSetActionNode(gPlayer, "/Global/G_Johnny/Cinematic/Jimmy/BellyUp/BellyUpGetUp/BellyUpGetUpGetUp", "G_Johnny.act")
 		PlayerSetHealth(200)
 		PlayerSetControl(1) --Restores the player's control
 		F_ToggleHudElements(true)
-		BlipBackToSchool = BlipAddXYZ(182.16, -67.50, 26.10, 0, 3, 0, 0) --adds a blip. (X,Y,Z, icon, ground blip type, visibility, Unknown)
-		TextPrintString("Don't let Gary run away!", 3, 1)
+		F_TextPrint("Don't let Gary run away!", 3, 3000, 1)
 
 		T_RoofChase = CreateThread("RoofChase")
 		SchoolChase()
@@ -190,29 +192,29 @@ RoofChase = function()
 
 		repeat
 		Wait(0)
-		until PedIsInAreaXYZ(GaryRoof, 198.69, -79.48, 35.68, 1, 0) --Same as PlayerIsInareaXYZ
+		until PedIsInAreaXYZ(GaryRoof, 199.97, -80.16, 35.68, 1, 0) --Same as PlayerIsInareaXYZ
 
 		PedStop(GaryRoof)
 
 	Wait(50)
 
 		PedFaceXYZ(GaryRoof, 186.21, -80.58, 35.68)
-		TextPrintString("Gary: No wonder your mother left you here! She must be SO embarassed by you, Jimmy Hopkins!", 6, 2)
+		F_TextPrint("Gary: No wonder your mother left you here!\nShe must be SO embarassed by you, Jimmy Hopkins!", 6, 0, 2)
 
 	Wait(500)
-	
-		PedSetActionNode(GaryRoof, "/Global/1_11X1/Animations/LaughCyclic/LaughCyclic", "Act/Conv/1_11X1.act")
-		
-		repeat
-		Distance = DistanceBetweenPeds2D(gPlayer, GaryRoof) --Calculates distance (X and Y) between Jimmy and Gary
-		Wait(0)
-		until Distance < 6 --This makes Gary run away when Jimmy gets close to him
 
-		PedSetActionNode(GaryRoof, "/Global/Ambient/Scripted/Empty/EmptyNode/TrueEmptyNode", "Act/Anim/Ambient.act") --A node with no animations, useful for stopping the current animation
+		PedSetActionNode(GaryRoof, "/Global/1_11X1/Animations/LaughCyclic/LaughCyclic", "1_11X1.act")
+		F_GaryThrowBrick()
+
+		repeat
+		DistanceM = DistanceBetweenPeds2D(gPlayer, GaryRoof)
+		Wait(0)
+		until DistanceM < 6
+
+		PedSetActionNode(GaryRoof, "/Global/Ambient/Scripted/Empty/EmptyNode/TrueEmptyNode", "Ambient.act") --A node with no animations, useful for stopping the current animation
 
 	Wait(5)
 
-		PedLockTarget(GaryRoof, gPlayer, -1)
 		PedFollowPath(GaryRoof, PATH._GARYPATH2, 0, 0)
 		
 	Wait(500)
@@ -221,12 +223,12 @@ RoofChase = function()
 
 	Wait(5)
 
-		PedSetWeapon(GaryRoof, 349, 3) --Self explanatory (Ped, WeaponID, Ammo)
+		PedSetWeapon(GaryRoof, 349, 3) --Self-explanatory (Ped, WeaponID, Ammo)
 		PedFollowPath(GaryRoof, PATH._GARYPATH2, 0, 1)
 
 	Wait(750)
 
-		PedSetActionNode(GaryRoof, "/Global/2_S04/Anim/AttachMarbles", "Act/Conv/2_S04.act")
+		PedSetActionNode(GaryRoof, "/Global/2_S04/Anim/AttachMarbles", "2_S04.act")
 
 		repeat
 		Wait(0)
@@ -236,6 +238,7 @@ RoofChase = function()
 
 		PedStop(GaryRoof)
 		PedFaceXYZ(GaryRoof, 205.48, -79.06, 35.69)
+		PedSetActionNode(GaryRoof, "/Global/Ambient/Scripted/Empty/EmptyNode/TrueEmptyNode", "Ambient.act")
 
 		repeat
 		Wait(0)
@@ -247,26 +250,33 @@ RoofChase = function()
 		
 	Wait(200)
 		
-		PedSetActionTree(GaryRoof, "/Global/Nemesis/Special/Throw", "Act/Anim/Nemesis.act")
+		PedSetActionTree(GaryRoof, "/Global/Nemesis/Special/Throw", "Nemesis.act")
         repeat
         Wait(0)
         until PedIsPlaying(GaryRoof, "/Global/Nemesis/Special/Throw/GetWeapon/Release/Empty", true)
-        PedSetActionTree(GaryRoof, "/Global/Nemesis", "Act/Anim/Nemesis.act")
+        PedSetActionTree(GaryRoof, "/Global/Nemesis", "Nemesis.act")
         PedLockTarget(GaryRoof, gPlayer, -1)
-		PedSetPosXYZ(GaryRoof, 204.66, -66.84, 35.29) --Same as AreaTransitionXYZ, but this can be used when not changing areas.
-		
+		PedSetPosXYZ(GaryRoof, 204.66, -66.84, 35.29) --This changes a ped's position instantly.
+
 	Wait(1000)
 
 		PedFollowPath(GaryRoof, PATH._GARYPATH3, 0, 2)
 		
 		repeat
 		Wait(0)
-		until PedIsInAreaXYZ(GaryRoof, 186.61, -66.06, 30.29, 1, 0)
-		
+		until PedIsInAreaXYZ(GaryRoof, 188.57, -65.90, 30.29, 1, 0)
+
+		PedStop(GaryRoof)
+		PedFaceXYZ(GaryRoof, 203.02, -65.77, 30.29)
+		PedSetActionNode(GaryRoof, "/Global/1_11X1/Animations/LaughCyclic/LaughCyclic", "1_11X1.act")
+		GameSetPedStat(GaryRoof, 20, 100)
+		F_GaryThrowBrick()
+		PedSetActionNode(GaryRoof, "/Global/Ambient/Scripted/Empty/EmptyNode/TrueEmptyNode", "Ambient.act")
+		PedMoveToXYZ(GaryRoof, 2, 186.77, -66.23, 30.29)
+
+	Wait(1050)
+
 		PedSetPosXYZ(GaryRoof, 185.63, -66.00, 29.50)
-		
-	Wait(50)
-	
 		PedFollowPath(GaryRoof, PATH._GARYPATH4, 0, 2)
 		
 		repeat
@@ -274,6 +284,25 @@ RoofChase = function()
 		until PedIsInAreaXYZ(GaryRoof, 182.08, -69.21, 26.10, 1.5, 0)
 
 		PedDelete(GaryRoof)
+		BlipBackToSchool = BlipAddXYZ(182.16, -67.50, 26.10, 0, 3, 0, 0) --adds a blip. (X,Y,Z, icon, ground blip type, visibility, Unknown)]]
+
+end
+
+F_GaryThrowBrick = function()
+
+		repeat
+		Distance = DistanceBetweenPeds2D(gPlayer, GaryRoof) --Calculates distance (X and Y) between Jimmy and Gary
+		Wait(0)
+		until Distance < 8 --This makes something happen when they're getting closer
+
+		PedLockTarget(GaryRoof, gPlayer, 3)
+		PedSetActionTree(GaryRoof, "/Global/Nemesis/Special/Throw", "Nemesis.act")
+        repeat
+        Wait(0)
+        until PedIsPlaying(GaryRoof, "/Global/Nemesis/Special/Throw/GetWeapon/Release/Empty", true)
+        PedSetActionTree(GaryRoof, "/Global/Nemesis", "Nemesis.act")
+        PedLockTarget(GaryRoof, gPlayer, -1)
+		PedSetActionNode(GaryRoof, "/Global/1_11X1/Animations/LaughCyclic/LaughCyclic", "1_11X1.act")
 
 end
 
@@ -282,7 +311,8 @@ SchoolChase = function()
 		repeat
 		Wait(0)
 		until AreaGetVisible() == 2 and not AreaIsLoading() --The game gets the ID of the current area, if it is 2 (school), it waits until it's fully loaded, then continues.
-		
+
+		PickupRemoveAll(362)
 		TerminateThread(T_RoofChase)
 
 		if PedIsValid(GaryRoof) then
@@ -313,9 +343,8 @@ SchoolChase = function()
 		T_MonitorGaryMarbles = CreateThread("T_MonitorGaryMarbles")
 		T_EasterEgg = CreateThread("T_EasterEgg")
 
-		TextPrintString("Gary: You'll never catch me, Hopkins!", 3, 2)
-		Wait(3000)
-		TextPrintString("Jimmy: Keep running like a baby!", 3, 2)
+		F_TextPrint("Gary: You'll never catch me, Hopkins!", 3, 3000, 2)
+		F_TextPrint("Jimmy: Keep running like a baby!", 3, 3000, 2)
 
 		repeat
 		Wait(0)
@@ -345,7 +374,7 @@ SchoolChase = function()
 				local X1, Y1, Z1 = PedGetOffsetInWorldCoords(gPlayer, -0.45, 1.35, 1.5000000476837) --Borrowed from Halloween's script, both functions get Jimmy's coordinates and change them to the one specified in the brackets
 				local X2, Y2, Z2 = PedGetOffsetInWorldCoords(gPlayer, 0.45, -0.69999998807907, 1.3000000476837)
 				CameraSetXYZ(X1, Y1, Z1, X2, Y2, Z2)
-				ExecuteActionNode(gPlayer, "/Global/1_11X2/Failure", "Act/Conv/1_11X2.act")
+				ExecuteActionNode(gPlayer, "/Global/1_11X2/Failure", "1_11X2.act")
 				CameraSetWidescreen(true)
 				Wait(800)
 				MissionFail()
@@ -357,6 +386,11 @@ SchoolChase = function()
 		TerminateThread(T_EasterEgg)
 		MissionTimerStop()
 		PlayerSetControl(0)
+		AreaDisableCameraControlForTransition(true)
+		CameraFade(500, 0)
+
+		Wait(500)
+
 		AreaTransitionXYZ(0, 212.10, -73.37, 8.62)
 
 		KartChase()
@@ -368,7 +402,7 @@ T_MonitorGaryMarbles = function()
 		repeat
 			if PedIsValid(Gary) then
 				Wait(1400)
-				PedSetActionNode(Gary, "/Global/2_S04/Anim/AttachMarbles", "Act/Conv/2_S04.act")
+				PedSetActionNode(Gary, "/Global/2_S04/Anim/AttachMarbles", "2_S04.act")
 			end
 		Wait(0)
 		until PedIsDead(Gary) or not PedIsValid(Gary)
@@ -396,68 +430,59 @@ T_EasterEgg = function()
 		SoundPlayStream("MS_5-05_BurtonPee_NIS.rsm", MUSIC_DEFAULT_VOLUME)
 		CreatePersistentEntity("DRP_Arcade", -698.18, 204.84, 32.70, 90, 5) --Adds a model (X, Y, Z, Rotation, AreaID)
 		CreatePersistentEntity("OffLapTop", -703.46, 204.88, 32.67, 0, 5)
-		DeadpoolXYZEG = PedCreateXYZ(147, -699.14, 204.11, 31.55)
+		deadpoolXYZEG = PedCreateXYZ(147, -699.14, 204.11, 31.55)
 		Derpy54320EG = PedCreateXYZ(165, -704.15, 204.89, 31.55)
 		SimonBestiaEG = PedCreateXYZ(85, -699.14, 205.15, 31.55)
 
 	Wait(15)
 
-		PedClearAllWeapons(DeadpoolXYZEG)
+		PedClearAllWeapons(deadpoolXYZEG)
 		PedClearAllWeapons(SimonBestiaEG)
-		PedFaceXYZ(DeadpoolXYZEG, -697.59, 204.62, 31.55)
+		PedFaceXYZ(deadpoolXYZEG, -697.59, 204.62, 31.55)
 		PedFaceXYZ(Derpy54320EG, -698.18, 204.84, 32.70)
 		PedFaceXYZ(SimonBestiaEG, -698.42, 204.88, 31.55)
 
 	Wait(50)
 
 		CameraSetXYZ(-698.03, 203.35, 33.17, -700.63, 206.35, 32.74)
-		PedSetActionNode(SimonBestiaEG, "/Global/3_R09/Animations/Nerds/Nerds01", "Act/Conv/3_R09.act")
-		PedSetActionNode(Derpy54320EG, "/Global/5_09/Anims/PeteSit", "Act/Conv/5_09.act")
-		TextPrintString("SimonBestia: No, no, no! You can't just cancel an hadoken into a shoryuken like that!", 5, 2)
-		Wait(5200)
-		PedSetActionNode(DeadpoolXYZEG, "/Global/3_R09/Animations/Nerds/Nerds02", "Act/Conv/3_R09.act")
-		TextPrintString("DeadpoolXYZ: Of course I can.", 2, 2)
-		Wait(2200)
-		
+		PedSetActionNode(SimonBestiaEG, "/Global/3_R09/Animations/Nerds/Nerds01", "3_R09.act")
+		PedSetActionNode(Derpy54320EG, "/Global/5_09/Anims/PeteSit", "5_09.act")
+		F_TextPrint("SimonBestia: No, no, no! You can't just cancel an hadouken into a shoryuken like that!", 5, 5200, 2)
+		PedSetActionNode(deadpoolXYZEG, "/Global/3_R09/Animations/Nerds/Nerds02", "3_R09.act")
+		F_TextPrint("deadpoolXYZ: Of course I can.", 2, 2200, 2)
 		CameraSetXYZ(-703.06, 204.05, 32.75, -705.85, 206.92, 32.71)
-		TextPrintString("Derpy54320: Guys, don't you think we should be checking if the script is working as intended?", 5, 2)
-		Wait(5200)
-		
+		F_TextPrint("Derpy54320: Guys, don't you think we should be checking if the script is working as intended?", 5, 5200, 2)
 		CameraSetXYZ(-700.67, 206.27, 33.15, -697.82, 203.52, 32.60)
 		PedFaceHeading(SimonBestiaEG, 90)
-		PedFaceHeading(DeadpoolXYZEG, 45)
-		TextPrintString("SimonBestia: Come on, DaBOSS, there's no way anyone would come here, they have no reason to.", 5, 2)
+		PedFaceHeading(deadpoolXYZEG, 45)
+		F_TextPrint("SimonBestia: Come on, Derpy, there's no way anyone would come here, they have no reason to.", 5, 5200, 2)
 		Wait(250)
-		PedSetActionNode(SimonBestiaEG, "/Global/C31Strt/FattyAvoid", "Act/Conv/C3_1.act")
-		Wait(5200)
-		
+		PedSetActionNode(SimonBestiaEG, "/Global/C31Strt/FattyAvoid", "C3_1.act")
 		PlayerSetPosXYZ(-701.21, 211.42, 31.55)
 		PedMoveToXYZ(gPlayer, 0, -701.21, 209.05, 31.55)
 		Wait(500)
 		CameraSetXYZ(-701.79, 207.51, 32.84, -700.19, 211.16, 32.61)
 		CreateThread("T_StopMusic")
 		Wait(500)
-		TextPrintString("Jimmy: What the hell is going on here?", 2, 2)
-		Wait(2500)
-
+		F_TextPrint("Jimmy: What the hell is going on here?", 2, 2500, 2)
 		CameraSetXYZ(-700.16, 206.15, 33.03, -698.01, 202.79, 33.27)
 		PedFaceHeading(SimonBestiaEG, 45)
-		PedSetActionNode(SimonBestiaEG, "/Global/4_G4/Scream", "Act/Conv/4_G4.act")
-		PedSetActionNode(DeadpoolXYZEG, "/Global/2_S06/Anims/BeatriceFreakOut/freakout", "Act/Conv/2_S06.act")
+		PedSetActionNode(SimonBestiaEG, "/Global/4_G4/Scream", "4_G4.act")
+		PedSetActionNode(deadpoolXYZEG, "/Global/2_S06/Anims/BeatriceFreakOut/freakout", "2_S06.act")
 
 	Wait(50)
 		
-		PedSetActionNode(SimonBestiaEG, "/Global/3_04/3_04_Anim/AlgieOhFace/OhFace", "Act/Conv/3_04.act")
-		PedSetActionNode(DeadpoolXYZEG, "/Global/3_04/3_04_Anim/AlgieOhFace/OhFace", "Act/Conv/3_04.act")
+		PedSetActionNode(SimonBestiaEG, "/Global/3_04/3_04_Anim/AlgieOhFace/OhFace", "3_04.act")
+		PedSetActionNode(deadpoolXYZEG, "/Global/3_04/3_04_Anim/AlgieOhFace/OhFace", "3_04.act")
 		Wait(3000)
-		PedSetActionNode(Derpy54320EG, "/Global/Ambient/Scripted/Empty/EmptyNode/TrueEmptyNode", "Act/Anim/Ambient.act")
-		PedSetActionNode(DeadpoolXYZEG, "/Global/Ambient/Scripted/Empty/EmptyNode/TrueEmptyNode", "Act/Anim/Ambient.act")
-		PedSetActionNode(SimonBestiaEG, "/Global/Ambient/Scripted/Empty/EmptyNode/TrueEmptyNode", "Act/Anim/Ambient.act")
+		PedSetActionNode(Derpy54320EG, "/Global/Ambient/Scripted/Empty/EmptyNode/TrueEmptyNode", "Ambient.act")
+		PedSetActionNode(deadpoolXYZEG, "/Global/Ambient/Scripted/Empty/EmptyNode/TrueEmptyNode", "Ambient.act")
+		PedSetActionNode(SimonBestiaEG, "/Global/Ambient/Scripted/Empty/EmptyNode/TrueEmptyNode", "Ambient.act")
 		PedSetPosXYZ(Derpy54320EG, -704.21, 206.43, 31.55)
 		Wait(50)
 		PedFaceXYZ(Derpy54320EG, -703.19, 207.33, 31.55)
 		CameraSetXYZ(-702.84, 207.87, 32.80, -705.05, 204.55, 32.50)
-		PedSetActionNode(Derpy54320EG, "/Global/C7/PlayerFail", "Act/Conv/C7.act")
+		PedSetActionNode(Derpy54320EG, "/Global/C7/PlayerFail", "C7.act")
 		Wait(3000)
 		CameraSetXYZ(-702.53, 201.11, 35.05, -701.79, 204.80, 33.72)
 		SoundPlayAmbience("SchoolNight.rsm", 0.1)
@@ -469,59 +494,49 @@ T_EasterEgg = function()
 		PedFaceXYZ(GaryEG, -701.30, 211.37, 31.55)
 		PedMoveToXYZ(GaryEG, 0, -701.30, 211.37, 31.55)
 		CameraSetXYZ(-701.86, 208.93, 33.14, -701.02, 212.81, 32.63)
-		TextPrintString("Gary: Hey Jimmy, stick to the script, we---", 2, 2)
+		F_TextPrint("Gary: Hey Jimmy, stick to the script, we---", 2, 2000, 2)
 		Wait(2000)
-
 		PedFaceXYZ(gPlayer, -701.30, 211.37, 31.55)
 		CameraSetXYZ(-701.28, 209.94, 33.08, -701.46, 205.95, 33.00)
 		Wait(3500)
 
 		CameraSetXYZ(-705.30, 207.36, 32.95, -701.56, 205.97, 32.68)
 		PedFaceXYZ(Derpy54320EG, -699.14, 205.15, 31.55)
-		PedSetActionNode(Derpy54320EG, "/Global/C7/TeacherDisgust", "Act/Conv/C7.act")
-		PedSetActionNode(DeadpoolXYZEG, "/Global/2_S04/Anim/Laugh", "Act/Conv/2_04.act")
-		TextPrintString("Derpy54320: Well, look who's wrong.", 2, 2)
+		PedSetActionNode(Derpy54320EG, "/Global/C7/TeacherDisgust", "C7.act")
+		PedSetActionNode(deadpoolXYZEG, "/Global/2_S04/Anim/Laugh", "2_04.act")
+		F_TextPrint("Derpy54320: Well, look who's wrong.", 2, 2200, 2)
 		SoundFadeoutAmbience()
-		Wait(2200)
 
 		MusicCanNowStart = true
 		SoundPlayStream("FIGHT01F.rsm", MUSIC_DEFAULT_VOLUME)
 		CameraSetXYZ(-700.10, 206.32, 32.53, -697.85, 203.23, 33.70)
-		TextPrintString("SimonBestia: LISTEN, YOU TWO.", 2, 2)
-		PedSetActionNode(SimonBestiaEG, "/Global/1_07/GoingDown", "Act/Conv/1_07.act")
-		Wait(2100)
-
+		F_TextPrint("SimonBestia: LISTEN, YOU TWO.", 2, 2100, 2)
+		PedSetActionNode(SimonBestiaEG, "/Global/1_07/GoingDown", "1_07.act")
 		CameraSetXYZ(-699.92, 205.55, 33.17, -696.09, 204.40, 33.21)
-		TextPrintString("SimonBestia: You guys are part of a videogame, you're not real.", 3, 2)
-		Wait(3100)
-
+		F_TextPrint("SimonBestia: You guys are part of a videogame, you're not real.", 3, 3100, 2)
 		CameraSetXYZ(-699.57, 203.00, 33.75, -700.52, 206.80, 32.89)
-		TextPrintString("SimonBestia: I don't know how you ended up here, but I have no choice, I have to erase your memories.", 5, 2)
+		F_TextPrint("SimonBestia: I don't know how you ended up here, but I have no choice, I have to erase your memories.", 5, 5100, 2)
 		PedFaceHeading(gPlayer, 180)
 		PedFaceXYZ(gPlayer, -699.14, 205.15, 31.55)
-		Wait(5100)
 
 		CameraSetXYZ(-700.91, 207.83, 33.09, -701.76, 211.68, 32.40)
 		PedMoveToXYZ(GaryEG, 0, -700.56, 209.47, 31.55)
-		PedSetActionNode(gPlayer, "/Global/1_11X1/Animations/Laugh_Shove/Laugh", "Act/Conv/1_11X1.act")
-		TextPrintString("Jimmy: Yeah right, give it a rest, Trent.", 3, 2)
-		Wait(3100)
+		PedSetActionNode(gPlayer, "/Global/1_11X1/Animations/Laugh_Shove/Laugh", "1_11X1.act")
+		F_TextPrint("Jimmy: Yeah right, give it a rest, Trent.", 3, 3100, 2)
 
 		CameraSetXYZ(-699.64, 206.29, 33.16, -698.59, 202.44, 32.95)
-		TextPrintString("SimonBestia: It's difficult to explain, but we're not your friends.", 4, 2)
+		F_TextPrint("SimonBestia: It's difficult to explain, but we're not your friends.", 4, 4100, 2)
 		PedFaceXYZ(Derpy54320EG, -701.21, 209.05, 31.55)
-		Wait(4100)
 
 		CameraSetXYZ(-699.83, 201.70, 34.02, -700.76, 205.41, 32.85)
-		TextPrintString("SimonBestia: I have to erase your memories now, goodbye.", 3, 2)
-		PedSetActionNode(gPlayer, "/Global/1_06/HoboFly", "Act/Conv/1_06.act")
-		PedSetActionNode(GaryEG, "/Global/1_06/HoboFly", "Act/Conv/1_06.act")
-		EffectSetGymnFireOn(true) --Self explanatory
-		Wait(3100)
+		F_TextPrint("SimonBestia: I have to erase your memories now, goodbye.", 3, 3100, 2)
+		PedSetActionNode(gPlayer, "/Global/1_06/HoboFly", "1_06.act")
+		PedSetActionNode(GaryEG, "/Global/1_06/HoboFly", "1_06.act")
+		EffectSetGymnFireOn(true) --Self-explanatory
 		CameraSetXYZ(-700.16, 206.28, 33.15, -697.33, 203.03, 33.01)
 		TextPrintString("SimonBestia: ZA WARUDO!", 2.5, 2)
 		TextPrintString("Translator Note: 'Za Warudo' means 'Make the game crash'.", 2.5, 1)
-		PedSetActionNode(SimonBestiaEG, "/Global/5_03/5_03_Johnny_In_Cell", "Act/Conv/5_03.act")
+		PedSetActionNode(SimonBestiaEG, "/Global/5_03/5_03_Johnny_In_Cell", "5_03.act")
 		Wait(1000)
 
 		CameraSetXYZ(-699.75, 205.80, 32.95, -697.03, 202.90, 33.43)
@@ -532,11 +547,12 @@ T_EasterEgg = function()
 end
 
 KartChase = function()
-		
+
 		repeat
 		Wait(0)
 		until AreaGetVisible() == 0 and not AreaIsLoading()
 
+		AreaDisableCameraControlForTransition(false)
 		NonMissionPedGenerationDisable()
 		AreaOverridePopulation(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 		CreateThread("T_FailDistance")
@@ -558,12 +574,13 @@ KartChase = function()
 		GaryVehicle = VehicleCreateXYZ(289, 229.02, -70.75, 6.30)  --Creates a vehicle (VehicleID, X,Y,Z)
 		JimmyVehicle = VehicleCreateXYZ(277, 229.55, -75.85, 6.19)
 		CameraSetXYZ(233.76, -75.12, 6.50, 228.63, -73.54, 7.10)
-		PedEnterVehicle(Gary2, GaryVehicle) --Self explanatory, make sure the ped is close enough to the vehicle or he won't be able to "find" it.
-		TextPrintString("Gary: Catch me if you can, LOSER!", 3, 2)
+		CameraFade(500, 1)
+		PedEnterVehicle(Gary2, GaryVehicle) --Self-explanatory, make sure the ped is close enough to the vehicle or he won't be able to "find" it.
+		F_TextPrint("Gary: Catch me if you can, LOSER!", 3, 0, 2)
 		
 	Wait(500)
 
-		PedSetActionNode(gPlayer, "/Global/5_03/5_03_NIS_Gateclose/Jimmy/Jimmy01", "Act/Conv/5_03.act")
+		PedSetActionNode(gPlayer, "/Global/5_03/5_03_NIS_Gateclose/Jimmy/Jimmy01", "5_03.act")
 	
 		repeat
 		Wait(0)
@@ -585,7 +602,7 @@ KartChase = function()
 		CameraReturnToPlayer()
 		
 	Wait(100)
-		
+
 		GameSetPedStat(gPlayer, 20, 115)
 		PedMoveToXYZ(gPlayer, 3, 229.65, -75.16, 6.26)
 
@@ -623,7 +640,7 @@ KartChase = function()
 
 		Wait(1500)
 
-		if PlayerIsInAnyVehicle() then	--Self explanatory
+		if PlayerIsInAnyVehicle() then	--Self-explanatory
 			PlayerDetachFromVehicle()
 		end
 
@@ -645,26 +662,17 @@ end
 
 T_KartChaseConversation = function()
 
-		TextPrintString("Gary: WHAT'S THE MATTER, JAMES? CAN'T KEEP UP?", 4, 2)
-		Wait(4000)
-		TextPrintString("Jimmy: YOU WENT TOO FAR, GARY!", 3, 2)
-		Wait(4000)
-		TextPrintString("*Cellphone ringing*", 1, 2)
-		Wait(1300)
-		TextPrintString("*Cellphone ringing*", 1, 2)
-		Wait(1300)
-		TextPrintString("*Cellphone ringing*", 1, 2)
-		Wait(1300)
-		TextPrintString("Jimmy: I need help! Please send help to my position!", 4, 2)
-		Wait(4000)
-		TextPrintString("Police: Sir, we'll send an officer but we need you to calm down and...", 3, 2)
-		Wait(3000)
+		F_TextPrint("Gary: WHAT'S THE MATTER, JAMES? CAN'T KEEP UP?", 4, 4000, 2)
+		F_TextPrint("Jimmy: YOU WENT TOO FAR, GARY!", 3, 4000, 2)
+		F_TextPrint("*Cellphone ringing*", 1, 1300, 2)
+		F_TextPrint("*Cellphone ringing*", 1, 1300, 2)
+		F_TextPrint("*Cellphone ringing*", 1, 1300, 2)
+		F_TextPrint("Jimmy: I need help! Please send help to my position!", 4, 4000, 2)
+		F_TextPrint("Police: Sir, we'll send an officer but we need you to calm down and...", 3, 3000, 2)
 		VehicleSetCruiseSpeed(GaryVehicle, 21)
-		TextPrintString("Jimmy: Sorry, but I'm too busy to use the phone right now!", 4, 2)
-		Wait(5000)
-		TextPrintString("Gary: CALLING THE COPS? YOU'RE NO FUN, JIMMY!", 3, 2)
-		Wait(3000)
-		TextPrintString("Jimmy: THINGS WON'T GO AS YOU WANT, GARY!", 3, 2)
+		F_TextPrint("Jimmy: Sorry, but I'm too busy to use the phone right now!", 4, 5000, 2)
+		F_TextPrint("Gary: CALLING THE COPS? YOU'RE NO FUN, JIMMY!", 3, 3000, 2)
+		F_TextPrint("Jimmy: THINGS WON'T GO AS YOU WANT, GARY!", 3, 2)
 
 end
 
@@ -685,20 +693,17 @@ PreBossBattleCutScene = function()
 	Wait(501)
 
 		PedMoveToXYZ(gPlayer, 0, 68.22, -313.84, 0.27)
-		TextPrintString("Jimmy: Are you done running?", 3, 2)
-		Wait(3050)
+		F_TextPrint("Jimmy: Are you done running?", 3, 3050, 2)
 	
 		CameraSetXYZ(71.87, -313.99, 2.15, 75.71, -315.11, 2.19)
-		PedSetActionNode(Gary2, "/Global/PriOff/TargetAnimations/TargetPoint", "Act/Conv/Prioff.act")
-		TextPrintString("Gary: Oh, but you see, James, you fell right into my trap!", 5, 2)
-		Wait(5200)
-	
-		PedSetActionNode(Gary2, "/Global/Ambient/Scripted/Empty/EmptyNode/TrueEmptyNode", "Act/Anim/Ambient.act")
+		PedSetActionNode(Gary2, "/Global/PriOff/TargetAnimations/TargetPoint", "Prioff.act")
+		F_TextPrint("Gary: Oh, but you see, James, you fell right into my trap!", 5, 5200, 2)
+		PedSetActionNode(Gary2, "/Global/Ambient/Scripted/Empty/EmptyNode/TrueEmptyNode", "Ambient.act")
 		
 	Wait(50)
 		
 		CameraSetXYZ(75.26, -312.66, 2.15, 71.76, -314.61, 2.08)
-		PedSetActionNode(gPlayer, "/Global/C31Strt/PlayerStretch", "Act/Conv/C3_1.act")
+		PedSetActionNode(gPlayer, "/Global/C31Strt/PlayerStretch", "C3_1.act")
 		
 	Wait(100)
 	
@@ -707,20 +712,16 @@ PreBossBattleCutScene = function()
 	Wait(2000)
 		
 		CameraSetXYZ(68.95, -313.85, 1.82, 64.97, -313.71, 1.45)
-		PedSetActionNode(Gary2, "/Global/PriOff/TargetAnimations/TargetGesture", "Act/Conv/PriOff.act")
-		TextPrintString("Gary: I have been hiding my true self.", 3, 2)
-		Wait(3100)
-	
+		PedSetActionNode(Gary2, "/Global/PriOff/TargetAnimations/TargetGesture", "PriOff.act")
+		F_TextPrint("Gary: I have been hiding my true self.", 3, 3100, 2)
 		CameraSetXYZ(75.26, -312.66, 2.15, 71.76, -314.61, 2.08)
-		PedSetActionNode(gPlayer, "/Global/1_07/DontMess", "Act/Conv/1_07.act")
-		TextPrintString("Gary: I. CAN. TRANSFORM!", 3, 2)
-		Wait(3100)
-	
-		PedSetActionNode(gPlayer, "/Global/3_04/3_04_Anim/AlgieOhFace/OhFace", "Act/Conv/3_04.act")
+		PedSetActionNode(gPlayer, "/Global/1_07/DontMess", "1_07.act")
+		F_TextPrint("Gary: I. CAN. TRANSFORM!", 3, 3100, 2)
+		PedSetActionNode(gPlayer, "/Global/3_04/3_04_Anim/AlgieOhFace/OhFace", "3_04.act")
 		CameraSetXYZ(68.95, -313.85, 1.82, 64.97, -313.71, 1.45)
 	
 	Wait(100)
-	
+
 		PedDelete(Gary2)
 		Gary3 = PedCreateXYZ(160, 72.65, -314.15, 0.65)
 		PedSetPedToTypeAttitude(Gary3, 13, 2) --Sets Gary's attitude towards Jimmy to "Ignore"
@@ -732,27 +733,24 @@ PreBossBattleCutScene = function()
 		VehicleDelete(Jimmy2Vehicle)
 		VehicleDelete(Gary2Vehicle)
 		SoundPlay2D("RUSS_ROAR") --Plays RUSS_ROAR from the previously loaded 1_B.SEA
-		PedSetActionNode(Gary3, "/Global/BOSS_Russell/Default_KEY/RisingAttacks/HeavyAttacks/RisingAttacks", "Act/Conv/Boss_Russell.act")
-		PedSetActionNode(gPlayer, "/Global/Ambient/Scripted/Empty/EmptyNode/TrueEmptyNode", "Act/Anim/Ambient.act")
+		PedSetActionNode(Gary3, "/Global/BOSS_Russell/Default_KEY/RisingAttacks/HeavyAttacks/RisingAttacks", "Boss_Russell.act")
+		PedSetActionNode(gPlayer, "/Global/Ambient/Scripted/Empty/EmptyNode/TrueEmptyNode", "Ambient.act")
 		
 	Wait(2800)
 	
 		CameraSetXYZ(68.95, -313.85, 1.82, 64.97, -313.71, 1.45)
 		GameSetPedStat(gPlayer, 20, 120)
-		PedSetActionNode(gPlayer, "/Global/2_S04/Anim/Laugh", "Act/Conv/2_04.act")
-		PedSetActionNode(gPlayer, "/Global/NLockA/Unlocked/Default", "Act/Conv/NLockA.act")
-		TextPrintString("Jimmy: Jokes on you, I can transform too!", 3, 2)
-		Wait(3100)
+		PedSetActionNode(gPlayer, "/Global/2_S04/Anim/Laugh", "2_04.act")
+		PedSetActionNode(gPlayer, "/Global/NLockA/Unlocked/Default", "NLockA.act") --This freezes a ped to the last frame of the previous animation
+		F_TextPrint("Jimmy: Joke's on you, I can transform too!", 3, 3100, 2)
 
 		CameraSetXYZ(71.87, -313.99, 2.15, 75.71, -315.11, 2.19)
 		F_ChangePlayerOutfit("Mascot")
-		PedSetActionNode(Gary3, "/Global/1_07/BackUp", "Act/Conv/1_07.act")
-		PedSetActionNode(gPlayer, "/Global/Chapter3Trans/JimmyBye", "Act/Conv/Chapt3Trans.act") --This animation ends with Jimmy's beta idle, so I use the next animation to freeze Jimmy in his beta pose
-		PedSetActionNode(gPlayer, "/Global/NLockA/Unlocked/Default", "Act/Conv/NLockA.act") --This freezes a ped to the last frame of the previous animation
-		
+		PedSetActionNode(Gary3, "/Global/1_07/BackUp", "1_07.act")
+		PedSetActionNode(pete, "/Global/Chapter3Trans/JimmyBye", "Chapt3Trans.act") --This animation ends with Jimmy's beta idle, then I use NLockA to freeze Jimmy in his beta pose
+		PedSetActionNode(gPlayer, "/Global/NLockA/Unlocked/Default", "NLockA.act")
 		SoundPlayStream("MS_ActionBeatBreak.rsm", MUSIC_DEFAULT_VOLUME)
-		TextPrintString("Gary: BULLSHIT, THERE'S NO WAY YOU COULD POSSIBLY---", 2, 2)
-		Wait(2100)
+		F_TextPrint("Gary: NONSENSE, THERE'S NO WAY YOU COULD POSSIBLY---", 2, 2100, 2)
 		
 		CameraSetXYZ(68.81, -314.61, 0.87, 65.73, -312.21, -0.02)
 		SoundPlay2D("Applause")
@@ -776,22 +774,20 @@ PreBossBattleCutScene = function()
 
 	Wait(100)
 
-		PedSetActionNode(gPlayer, "/Global/4_05/Anims/MascotActions/DanceD", "Act/Conv/4_05.act")
-		TextPrintString("Jimmy: ACTIVATE BULL POWEEEEEEEEEEEEEEEEER!", 3, 2)
-		Wait(3500)
-
+		PedSetActionNode(gPlayer, "/Global/4_05/Anims/MascotActions/DanceD", "4_05.act")
+		F_TextPrint("Jimmy: ACTIVATE BULL POWEEEEEEEEEEEEEEEEER!", 3, 3500, 2)
 		CameraSetXYZ(72.65, -313.85, 1.91, 76.09, -315.62, 2.90)
-		PedSetActionNode(Gary3, "/Global/2_08Conv/ComeOn", "Act/Conv/2_08.act")
-		TextPrintString("Gary: I'M STILL GONNA BEAT YOU!", 3, 2)
+		PedSetActionNode(Gary3, "/Global/2_08Conv/ComeOn", "2_08.act")
+		F_TextPrint("Gary: I'M STILL GONNA BEAT YOU!", 3, 3000, 2)
 		SoundStopStream()
-		Wait(3000)
-		
+
 		BossBattle()
 
 end
 
 BossBattle = function()
 
+		SoundPlayStream("MS_FinalShowdown03High.rsm", MUSIC_DEFAULT_VOLUME)
 		CreateThread("T_GaryFightingStyle")
 
 		--Invisible barrier, by Derpy54320
@@ -813,7 +809,6 @@ BossBattle = function()
 
 	--Round 1 Boss Fight
 
-		SoundPlayStream("MS_FinalShowdown03High.rsm", MUSIC_DEFAULT_VOLUME)
 		SoundEnableSpeech() --Restores peds' voices
 		PlayerSetControl(1)
 		F_ToggleHudElements(true)
@@ -821,7 +816,7 @@ BossBattle = function()
 	--Setup Gary:
 
 		PedLockTarget(Gary3, gPlayer)
-		PedSetActionTree(Gary3, "/Global/Nemesis", "Act/Anim/Nemesis.act") --Sets a fighting style
+		PedSetActionTree(Gary3, "/Global/Nemesis", "Nemesis.act") --Sets a fighting style
 		PedSetAITree(Gary3, "/Global/GaryAI", "Act/AI/AI_Gary.act") --Sets the ped's AI to a specific AI.
 		PedSetInfiniteSprint(Gary3, true)
 		GameSetPedStat(Gary3, 4, 400)
@@ -835,7 +830,7 @@ BossBattle = function()
 		GameSetPedStat(Gary3, 20, 165)
 		PedSetDamageGivenMultiplier(Gary3, 2, 1.1) --Multiplies Gary's melee damage by 1.1
 		AddBlipForChar(Gary3, 0, 34, 4)
-		PedAttack(Gary3, gPlayer, 2) --Self explanatory, 2 sets the ped to ALWAYS attack a specific ped, even if another ped attacks him.
+		PedAttack(Gary3, gPlayer, 2) --Self-explanatory, 2 sets the ped to ALWAYS attack a specific ped, even if another ped attacks him.
 
 	Wait(1)
 
@@ -863,11 +858,12 @@ BossBattle = function()
 		GameSetPedStat(gPlayer, 20, 100)
 		GameSetPedStat(Gary3, 20, 100)
 		SoundStopStream()
-		PedSetActionNode(Gary3, "/Global/Ambient/Scripted/Empty/EmptyNode/TrueEmptyNode", "Act/Anim/Ambient.act")
+		PedSetActionNode(Gary3, "/Global/Ambient/Scripted/Empty/EmptyNode/TrueEmptyNode", "Ambient.act")
 		PlayerSetControl(0)
-		PedSetActionNode(gPlayer, "/Global/Ambient/Scripted/Empty/EmptyNode/TrueEmptyNode", "Act/Anim/Ambient.act")
+		PedSetActionNode(gPlayer, "/Global/Ambient/Scripted/Empty/EmptyNode/TrueEmptyNode", "Ambient.act")
 		PedStop(Gary3) --Both of these stop a ped
 		PedClearObjectives(Gary3)
+		Gary4 = PedCreateXYZ(160, 69.27, -323.60, 0.35)
 		
 	Wait(1700)
 		
@@ -907,7 +903,7 @@ FailCutscene1 = function()
 
 		CameraFade(500, 1)
 		PedMoveToXYZ(gPlayer, 2, -5.90, -261.86, 3.97)
-		PedSetActionNode(Gary3, "/Global/1_11X1/Animations/LaughCyclic/LaughCyclic", "Act/Conv/1_11X1.act")
+		PedSetActionNode(Gary3, "/Global/1_11X1/Animations/LaughCyclic/LaughCyclic", "1_11X1.act")
 		TextPrintString("Gary: Running away? Hahaha! Enjoy your last moments, Hopkins!", 4, 2)
 		Wait(4500)
 
@@ -924,7 +920,6 @@ end
 PreBossBattlePT2Cutscene = function()
 
 		F_ToggleHudElements(false)
-		Gary4 = PedCreateXYZ(160, 69.27, -323.60, 0.35)
 		
 	Wait(25)
 
@@ -933,8 +928,8 @@ PreBossBattlePT2Cutscene = function()
 		
 	Wait(25)
 	
-		PedSetActionNode(Gary4, "/Global/4_B2/ReactionAnims/GetUpHard", "Act/Conv/4_B2.act")
-		PedSetActionNode(gPlayer, "/Global/4_B2/ReactionAnims/GetUpHard", "Act/Conv/4_B2.act")
+		PedSetActionNode(Gary4, "/Global/4_B2/ReactionAnims/GetUpHard", "4_B2.act")
+		PedSetActionNode(gPlayer, "/Global/4_B2/ReactionAnims/GetUpHard", "4_B2.act")
 		CameraSetXYZ(73.99, -319.28, 1.85, 70.01, -319.71, 1.66)
 		
 	Wait(1725)
@@ -952,17 +947,15 @@ PreBossBattlePT2Cutscene = function()
 
 	Wait(500)
 
-		TextPrintString("Gary: Don't think you've got the upper hand, James...", 3, 2)
-		Wait(3000)
-		TextPrintString("Gary: I still haven't used all of my power!", 2, 2)
-		Wait(2000)
+		F_TextPrint("Gary: Don't think you've got the upper hand, James...", 3, 3000, 2)
+		F_TextPrint("Gary: I still haven't used all of my power!", 2, 2000, 2)
 
 		CameraSetXYZ(69.97, -322.71, 1.25, 67.44, -325.44, 2.72)
-		PedSetActionNode(Gary4, "/Global/Ambient/Scripted/Empty/EmptyNode/TrueEmptyNode", "Act/Anim/Ambient.act")
+		PedSetActionNode(Gary4, "/Global/Ambient/Scripted/Empty/EmptyNode/TrueEmptyNode", "Ambient.act")
 
 	Wait(5)
 
-		PedSetActionNode(Gary4, "/Global/6_02/GaryNIS/Russell/Russell01", "Act/Conv/6_02.act")
+		PedSetActionNode(Gary4, "/Global/6_02/GaryNIS/Russell/Russell01", "6_02.act")
 		EffectCreate("BottleRocketExplosion", 69.27, -323.60, 0.65) --Creates an effect at XYZ
 		WeatherSet(5) --Sets the weather to storm, unused
 		ClockSet(24)
@@ -971,14 +964,14 @@ PreBossBattlePT2Cutscene = function()
 	Wait(500)
 
 		CreateThread("T_StopMusic")
-		TextPrintString("Gary: BEHOLD! MY ULTIMATE POWER!", 3, 2)
+		F_TextPrint("Gary: BEHOLD! MY ULTIMATE POWER!", 3, 0, 2)
 		Wait(225)
 		CameraSetXYZ(80.60, -330.90, 8.05, 77.66, -328.29, 7.33)
-		PedSetActionNode(gPlayer, "/Global/Ambient/Scripted/Empty/EmptyNode/TrueEmptyNode", "Act/Anim/Ambient.act")
+		PedSetActionNode(gPlayer, "/Global/Ambient/Scripted/Empty/EmptyNode/TrueEmptyNode", "Ambient.act")
 
 	Wait(2500)
 
-		PedSetActionNode(Gary4, "/Global/Ambient/Scripted/Empty/EmptyNode/TrueEmptyNode", "Act/Anim/Ambient.act")
+		PedSetActionNode(Gary4, "/Global/Ambient/Scripted/Empty/EmptyNode/TrueEmptyNode", "Ambient.act")
 
 	Wait(1000)
 
@@ -986,36 +979,32 @@ PreBossBattlePT2Cutscene = function()
 		
 	Wait(5)
 	
-		PedSetActionNode(gPlayer, "/Global/3_S03/NIS/Crabble/Crabble01", "Act/Conv/3_S03.act")
-		PedSetActionNode(Gary4, "/Global/2_S04/Anim/RochambeauNIS/TrentRules", "Act/Conv/2_S04.act")
+		PedSetActionNode(gPlayer, "/Global/3_S03/NIS/Crabble/Crabble01", "3_S03.act")
+		PedSetActionNode(Gary4, "/Global/2_S04/Anim/RochambeauNIS/TrentRules", "2_S04.act")
 
 	Wait(150)
 
 		CameraSetXYZ(67.63, -315.70, 1.85, 70.11, -318.84, 1.85)
-		TextPrintString("Gary: Well, James, I'm sure you now understand what you got yourself into.", 5.2, 2)
-		Wait(5300)
+		F_TextPrint("Gary: Well, James, I'm sure you now understand what you got yourself into.", 5.2, 5300, 2)
 		CameraSetXYZ(68.84, -322.81, 1.85, 71.40, -325.88, 1.89)
-		PedSetActionNode(gPlayer, "/Global/Ambient/Scripted/Empty/EmptyNode/TrueEmptyNode", "Act/Anim/Ambient.act")
-		TextPrintString("Gary: I bet you're wondering how I became so powerful.", 3, 2)
-		Wait(3000)
-		PedSetActionNode(gPlayer, "/Global/3_S03/NIS/Crabble/Crabble01", "Act/Conv/3_S03.act")
+		PedSetActionNode(gPlayer, "/Global/Ambient/Scripted/Empty/EmptyNode/TrueEmptyNode", "Ambient.act")
+		F_TextPrint("Gary: I bet you're wondering how I became so powerful.", 3, 3000, 2)
+		PedSetActionNode(gPlayer, "/Global/3_S03/NIS/Crabble/Crabble01", "3_S03.act")
 
 	Wait(200)
 
 		PedSetPosXYZ(Gary4, 69.27, -323.95, 0.35)
 		CameraSetXYZ(67.68, -317.09, 1.45, 70.15, -314.09, 2.60)
-		TextPrintString("Gary: Well, excluding fan-fictions...", 4, 2)
-		Wait(4000)
+		F_TextPrint("Gary: Well, excluding fan-fictions...", 4, 4000, 2)
 		CameraSetXYZ(68.72, -323.06, 1.75, 71.08, -326.23, 1.75)
-		TextPrintString("Gary: ...You don't actually care, do you?", 3, 2)
-		Wait(3200)
+		F_TextPrint("Gary: ...You don't actually care, do you?", 3, 3200, 2)
 		MusicCanNowStart = true
-		PedSetActionNode(gPlayer, "/Global/3_S03/NIS/Crabble/Crabble01", "Act/Conv/3_S03.act")
+		PedSetActionNode(gPlayer, "/Global/3_S03/NIS/Crabble/Crabble01", "3_S03.act")
 		Wait(100)
 		MusicFadeWithCamera(false) --Makes the music play even when the screen is black
 		SoundPlayStream("MS_FinalShowdownHigh.rsm", MUSIC_DEFAULT_VOLUME)
 		TextPrintString("Gary: THEN LET THE GAMES BEGIN!", 2, 2)
-		PedSetActionNode(Gary4, "/Global/2_08Conv/ComeOn", "Act/Conv/2_08.act")
+		PedSetActionNode(Gary4, "/Global/2_08Conv/ComeOn", "2_08.act")
 		CameraSetPath(PATH._BOSSFIGHTCUTCAM1, true) --The camera follows the path in BOSSFIGHTCAM1 from my custom .dat file
 		CameraSetSpeed(7, 7, 7)
 		CameraLookAtPath(PATH._BOSSFIGHTCUTCAM_LOOKAT1, true) --The camera will look at the coordinates in BOSSFIGHTCAM_LOOKAT1
@@ -1034,7 +1023,7 @@ end
 
 BossBattlePT2 = function()
 
-		PedSetActionNode(gPlayer, "/Global/Ambient/Scripted/Empty/EmptyNode/TrueEmptyNode", "Act/Anim/Ambient.act")
+		PedSetActionNode(gPlayer, "/Global/Ambient/Scripted/Empty/EmptyNode/TrueEmptyNode", "Ambient.act")
 
 	Wait(50)
 
@@ -1047,14 +1036,14 @@ BossBattlePT2 = function()
 	
 	--Setup Gary:
 		
-		PedSetActionTree(Gary4, "/Global/Nemesis", "Act/Anim/Nemesis.act")
-		PedSetAITree(Gary4, "/Global/GaryAI", "Act/AI/AI_Gary.act")
+		PedSetActionTree(Gary4, "/Global/Nemesis", "Nemesis.act")
+		PedSetAITree(Gary4, "/Global/GaryAI", "AI_Gary.act")
 		PedSetInfiniteSprint(Gary4, true)
-		PedSetHealth(Gary4, 750)
-		GameSetPedStat(Gary4, 4, 750)
+		PedSetHealth(Gary4, 650)
+		GameSetPedStat(Gary4, 4, 650)
 		GameSetPedStat(Gary4, 8, 900)
 		GameSetPedStat(Gary4, 12, 400)
-		GameSetPedStat(Gary4, 13, 79)
+		GameSetPedStat(Gary4, 13, 60)
 		GameSetPedStat(Gary4, 31, 11)
 		GameSetPedStat(Gary4, 63, 1)
 		GameSetPedStat(Gary4, 20, 170)
@@ -1098,7 +1087,7 @@ BossBattlePT2 = function()
 		CameraFade(1000, 0)
 		PedMakeTargetable(gPlayer, false)
 		PlayerSetControl(0)
-		PedSetActionNode(gPlayer, "/Global/Ambient/Scripted/Empty/EmptyNode/TrueEmptyNode", "Act/Anim/Ambient.act")
+		PedSetActionNode(gPlayer, "/Global/Ambient/Scripted/Empty/EmptyNode/TrueEmptyNode", "Ambient.act")
 		PedStop(Gary4)
 		PedClearObjectives(Gary4)
 		SoundStopStream()
@@ -1162,10 +1151,10 @@ T_GhostPicker = function()
 				PedStop(Ghosts.ped)
 				PedClearObjectives(Ghosts.ped)
 				PedSetFlag(Ghosts.ped, 9, true)
-				PedSetActionNode(Ghosts.ped, "/Global/Ambient/Scripted/Empty/EmptyNode/TrueEmptyNode", "Act/Anim/Ambient.act")
+				PedSetActionNode(Ghosts.ped, "/Global/Ambient/Scripted/Empty/EmptyNode/TrueEmptyNode", "Ambient.act")
 			elseif PedIsValid(EarnestGhost) then
-				if PedIsPlaying(EarnestGhost, "/Global/N_Earnest/Offense/FireSpudGun", "Act/Anim/N_Earnest.act", true) then
-					PedSetActionNode(EarnestGhost, "/Global/Ambient/Scripted/Empty/EmptyNode/TrueEmptyNode", "Act/Anim/Ambient.act")
+				if PedIsPlaying(EarnestGhost, "/Global/N_Earnest/Offense/FireSpudGun", "N_Earnest.act", true) then
+					PedSetActionNode(EarnestGhost, "/Global/Ambient/Scripted/Empty/EmptyNode/TrueEmptyNode", "Ambient.act")
 				end
 			end
 
@@ -1181,17 +1170,17 @@ EarnestGhost = function()
 				PedSetEffectedByGravity(EarnestGhost, false)
 				PedSetPedToTypeAttitude(EarnestGhost, 13, 0)
 				PedSetStationary(EarnestGhost, true)
-				PedSetDamageGivenMultiplier(EarnestGhost, 0, 0.5)
+				PedSetDamageGivenMultiplier(EarnestGhost, 0, 0.3)
 				PedMakeTargetable(EarnestGhost, false)
 				PedSetInvulnerable(EarnestGhost, true)
 				PedSetWeapon(EarnestGhost, 305, 20)
 				Wait(1000)
 				PedLockTarget(EarnestGhost, gPlayer)
-				PedSetActionNode(EarnestGhost, "/Global/N_Earnest/Offense/FireSpudGun", "Act/Anim/N_Earnest.act")
+				PedSetActionNode(EarnestGhost, "/Global/N_Earnest/Offense/FireSpudGun", "N_Earnest.act")
 				Wait(100)
 				repeat
 				Wait(0)
-				until not PedIsPlaying(EarnestGhost, "/Global/N_Earnest/Offense/FireSpudGun", "Act/Anim/N_Earnest.act", true) or PedIsDead(Gary4)
+				until not PedIsPlaying(EarnestGhost, "/Global/N_Earnest/Offense/FireSpudGun", "N_Earnest.act", true) or PedIsDead(Gary4)
 				PedSetFlag(EarnestGhost, 9, true)
 				PedStop(EarnestGhost)
 				PedClearObjectives(EarnestGhost)
@@ -1204,16 +1193,16 @@ end
 JohnnyDarbyGhosts = function()
 
 		GhostsTable = {
-			{ped = nil, id = 217, act = "/Global/G_Johnny", actfile = "Act/Anim/G_Johnny.act", ai = "/Global/AI", aifile = "Act/AI/AI.act"},
-			{ped = nil, id = 37, act = "/Global/BOSS_Darby", actfile = "Act/Anim/BOSS_Darby.act", ai = "/Global/DarbyAI", aifile = "Act/AI/AI_DARBY_2_B.act"},
+			{ped = nil, id = 217, act = "/Global/G_Johnny", actfile = "G_Johnny", ai = "/Global/AI", aifile = "Act/AI/AI"},
+			{ped = nil, id = 37, act = "/Global/BOSS_Darby", actfile = "BOSS_Darby", ai = "/Global/DarbyAI", aifile = "Act/AI/AI_DARBY_2_B"},
 		}
 
 		X, Y, Z = PedGetOffsetInWorldCoords(gPlayer, 2.5, 2.5, 0)
 
 		for i, Ghosts in ipairs(GhostsTable) do
 			Ghosts.ped = PedCreateXYZ(Ghosts.id, X, Y, Z)
-			PedSetActionTree(Ghosts.ped, Ghosts.act, Ghosts.actfile)
-			PedSetAITree(Ghosts.ped, Ghosts.ai, Ghosts.aifile)
+			PedSetActionTree(Ghosts.ped, Ghosts.act, Ghosts.actfile..".act")
+			PedSetAITree(Ghosts.ped, Ghosts.ai, Ghosts.aifile..".act")
 			EffectCreate("BottleRocketExplosion", X, Y, Z + 0.5)
 			GameSetPedStat(Ghosts.ped, 20, 135)
 			GameSetPedStat(Ghosts.ped, 8, 900)
@@ -1229,7 +1218,9 @@ JohnnyDarbyGhosts = function()
 
 		--TextPrintString("DEBUG: Waiting to delete ped...", 4, 1)
 
-	Wait(5000)
+		if not PedIsDead(Gary) then
+			Wait(5000)
+		end
 
 		for i, Ghosts in ipairs(GhostsTable) do
 			--TextPrintString("DEBUG: Deleting ped...", 1, 1)
@@ -1299,13 +1290,13 @@ FailCutscene2 = function()
 
 		CameraFade(500, 1)
 		PedMoveToXYZ(gPlayer, 2, -5.90, -261.86, 3.97)
-		PedSetActionNode(GaryFail2, "/Global/1_11X1/Animations/LaughCyclic/LaughCyclic", "Act/Conv/1_11X1.act")
+		PedSetActionNode(GaryFail2, "/Global/1_11X1/Animations/LaughCyclic/LaughCyclic", "1_11X1.act")
 		Wait(150)
-		PedSetActionNode(DarbyFail2, "/Global/1_11X1/Animations/LaughCyclic/LaughCyclic", "Act/Conv/1_11X1.act")
+		PedSetActionNode(DarbyFail2, "/Global/1_11X1/Animations/LaughCyclic/LaughCyclic", "1_11X1.act")
 		Wait(150)
-		PedSetActionNode(JohnnyFail2, "/Global/1_11X1/Animations/LaughCyclic/LaughCyclic", "Act/Conv/1_11X1.act")
+		PedSetActionNode(JohnnyFail2, "/Global/1_11X1/Animations/LaughCyclic/LaughCyclic", "1_11X1.act")
 		Wait(150)
-		PedSetActionNode(EarnestFail2, "/Global/1_11X1/Animations/LaughCyclic/LaughCyclic", "Act/Conv/1_11X1.act")
+		PedSetActionNode(EarnestFail2, "/Global/1_11X1/Animations/LaughCyclic/LaughCyclic", "1_11X1.act")
 		TextPrintString("Gary: Running away? Hahaha! Enjoy your last moments, Hopkins!", 4, 2)
 		Wait(4500)
 
@@ -1341,7 +1332,7 @@ PostBossBattleCutScene = function()
 		PlayerSetPosXYZ(70.76, -324.23, 0.34)
 		Wait(100)
 		
-		PedSetActionNode(Gary5, "/Global/4_05/Anims/StealCostumeCut/KnockedOut", "Act/Conv/4_05.act")
+		PedSetActionNode(Gary5, "/Global/4_05/Anims/StealCostumeCut/KnockedOut", "4_05.act")
 		Wait(100)
 		CameraFade(2000, 1)
 
@@ -1349,14 +1340,12 @@ PostBossBattleCutScene = function()
 
 		PedMoveToXYZ(gPlayer, 0, 69.47, -322.28, 0.42)
 		Wait(1500)
-		PedSetActionNode(gPlayer, "/Global/3_B/Animation/Crouch/Crouch", "Act/Conv/3_B.act")
+		PedSetActionNode(gPlayer, "/Global/3_B/Animation/Crouch/Crouch", "3_B.act")
 		
 	Wait(100)
 	
-		TextPrintString("Jimmy: Who's the boss? ME! Got it?", 3, 2)
-		Wait(3000)
-		TextPrintString("Gary: It's not over... not yet...", 3, 2)
-		Wait(3100)
+		F_TextPrint("Jimmy: Who's the boss? ME! Got it?", 3, 3000, 2)
+		F_TextPrint("Gary: It's not over... not yet...", 3, 3100, 2)
 		
 		PoliceCar = VehicleCreateXYZ(295, 86.30, -364.89, 0.33)
 		Officer = PedCreateXYZ(97, 86.83, -366.97, 0.33)
@@ -1365,7 +1354,7 @@ PostBossBattleCutScene = function()
 		
 		CameraAllowChange(true)
 		VehicleFaceHeading(PoliceCar, 60)
-		PedWarpIntoCar(Officer, PoliceCar) --Self explanatory
+		PedWarpIntoCar(Officer, PoliceCar) --Self-explanatory
 		CameraSetXYZ(68.89, -328.30, 2.08, 70.77, -332.45, 1.47) --(68.19, -326.90, 1.96, 69.71, -330.56, 1.40)
 		VehicleEnableEngine(PoliceCar, true) --Turns on the lights
 		VehicleSetEntityFlag(PoliceCar, 43, false)
@@ -1390,18 +1379,16 @@ PostBossBattleCutScene = function()
 		
 	Wait(100)
 		
-		PedExitVehicle(Officer) --Self explanatory
+		PedExitVehicle(Officer) --Self-explanatory
 		
 	Wait(1750)
 		
 		PedFaceXYZ(Officer, 70.46, -322.68, 0.34)
-		TextPrintString("Officer: Hey, are you the one who made that call?", 4, 2)
-		PedSetActionNode(Officer, "/Global/1_04/GaryPoint/GaryPointAnim", "Act/Conv/1_04.act")
-		PedSetActionNode(Gary5, "/Global/4_B2/ReactionAnims/GetUpEasy", "Act/Conv/4_B2.act")
-
-	Wait(4200)
-	
-		PedSetActionNode(gPlayer, "/Global/3_B/Animation/Stand/Stand", "Act/Conv/3_B.act")
+		F_TextPrint("Officer: Hey, are you the one who made that call?", 4, 0, 2)
+		PedSetActionNode(Officer, "/Global/1_04/GaryPoint/GaryPointAnim", "1_04.act")
+		Wait(4200)
+		PedSetActionNode(Gary5, "/Global/4_B2/ReactionAnims/GetUpEasy", "4_B2.act")
+		PedSetActionNode(gPlayer, "/Global/3_B/Animation/Stand/Stand", "3_B.act")
 
 	Wait(300)
 		
@@ -1410,17 +1397,14 @@ PostBossBattleCutScene = function()
 		
 	Wait(500)
 		
-		TextPrintString("Jimmy: Yes, my name is Jimmy Hopkins. I believe you're looking for this individual.", 5, 2)
-		Wait(5000)
+		F_TextPrint("Jimmy: Yes, my name is Jimmy Hopkins. I believe you're looking for this individual.", 5, 5000, 2)
 		CameraSetXYZ(68.02, -327.68, 1.65, 70.18, -331.05, 2.20)
-		PedSetActionNode(Officer, "/Global/3_04/3_04_Anim/JohnnyIdle/JohnnyIdle", "Act/Conv/3_04.act")
-		TextPrintString("Officer: Yes, Gary Smith. He's probably going to remain in the Happy Volts Asylum for a long time.", 5, 2)
+		PedSetActionNode(Officer, "/Global/3_04/3_04_Anim/JohnnyIdle/JohnnyIdle", "3_04.act")
+		F_TextPrint("Officer: Yes, Gary Smith. He's probably going to remain in the Happy Volts Asylum for a long time.", 5, 5000, 2)
 		PedFaceXYZ(gPlayer, 69.40, -329.45, 0.30)
-		Wait(5000)
-		PedSetActionNode(Officer, "/Global/3_04/3_04_Anim/JohnnyIdle/Johnny2", "Act/Conv/3_04.act")
-		TextPrintString("Officer: Thank you for your help, Mr. Hopkins.", 4, 2)
-		Wait(4050)
-		PedSetActionNode(Officer, "/Global/Ambient/Scripted/Empty/EmptyNode/TrueEmptyNode", "Act/Anim/Ambient.act")
+		PedSetActionNode(Officer, "/Global/3_04/3_04_Anim/JohnnyIdle/Johnny2", "3_04.act")
+		F_TextPrint("Officer: Thank you for your help, Mr. Hopkins.", 4, 4050, 2)
+		PedSetActionNode(Officer, "/Global/Ambient/Scripted/Empty/EmptyNode/TrueEmptyNode", "Ambient.act")
 		
 	Wait(50)
 		
@@ -1438,9 +1422,9 @@ PostBossBattleCutScene = function()
 		PedLockTarget(gPlayer, -1)
 		CameraSetXYZ(69.66, -320.50, 1.40, 68.82, -324.17, 2.75) --CameraSetXYZ(65.87, -328.93, 2.45,68.75, -326.27, 1.71)
 		PlayerFaceHeading(0, 1)
-		TextPrintString("Officer: Get up, you monster.", 2, 2)
+		F_TextPrint("Officer: Get up, you monster.", 2, 0, 2)
 		Wait(500)
-		PedSetActionNode(Gary5, "/Global/4_B2/ReactionAnims/GetUpHard", "Act/Conv/4_B2.act")
+		PedSetActionNode(Gary5, "/Global/4_B2/ReactionAnims/GetUpHard", "4_B2.act")
 		
 	Wait(4500)
 		
@@ -1477,10 +1461,10 @@ EndingAndCredits = function()
 		PedFaceXYZ(SimonBestia, 280, -104.69, 6.21)
 		PedIgnoreAttacks(SimonBestia, true)
 		PedIgnoreStimuli(SimonBestia, true)
-		DeadpoolXYZ = PedCreateXYZ(147, 280.11, -105.39, 6.18)
-		PedFaceXYZ(DeadpoolXYZ, 280, -103.30, 6.18)
-		PedIgnoreAttacks(DeadpoolXYZ, true)
-		PedIgnoreStimuli(DeadpoolXYZ, true)
+		deadpoolXYZ = PedCreateXYZ(147, 280.11, -105.39, 6.18)
+		PedFaceXYZ(deadpoolXYZ, 280, -103.30, 6.18)
+		PedIgnoreAttacks(deadpoolXYZ, true)
+		PedIgnoreStimuli(deadpoolXYZ, true)
 		Derpy54320 = PedCreateXYZ(165, 281.07, -105.47, 6.18)
 		PedFaceXYZ(Derpy54320, 280, -103.30, 6.18)
 		PedSetWeapon(Derpy54320, 414, 1)
@@ -1495,37 +1479,31 @@ EndingAndCredits = function()
 		PedIgnoreAttacks(Pete, true)
 		PedIgnoreStimuli(Gary6, true)
 		PedIgnoreStimuli(Pete, true)
-		PedClearAllWeapons(DeadpoolXYZ)
+		PedClearAllWeapons(deadpoolXYZ)
 		PedClearAllWeapons(SimonBestia)
 
-		PedSetActionNode(gPlayer, "/Global/3_05/Animations/Player/Player01", "Act/Conv/3_05.act")
-		TextPrintString("Jimmy: And that's the dream I had.", 2.5, 2)
-		Wait(2600)
+		PedSetActionNode(gPlayer, "/Global/3_05/Animations/Player/Player01", "3_05.act")
+		F_TextPrint("Jimmy: And that's the dream I had.", 2.5, 2600, 2)
 		CameraSetXYZ(264.25, -110.89, 7.79, 261.72, -113.92, 7.14)
-		PedSetActionNode(Gary6, "/Global/1_11X2/CutPlan/Gary92", "Act/Conv/1_11X2.act")
-		TextPrintString("Gary: I liked the part where I turned into a werewolf.", 3.5, 2)
-		Wait(3600)
+		PedSetActionNode(Gary6, "/Global/1_11X2/CutPlan/Gary92", "1_11X2.act")
+		F_TextPrint("Gary: I liked the part where I turned into a werewolf.", 3.5, 3600, 2)
 		PedFaceXYZ(gPlayer, 262.71, -113.68, 6.20)
 		CameraSetXYZ(265.46, -113.30, 7.72, 261.56, -113.30, 6.83)
-		PedSetActionNode(Pete, "/Global/1_11X2/CutPlan/Pete94", "Act/Conv/1_11X2.act")
-		TextPrintString("Pete: But what about me?", 2.5, 2)
-		Wait(2600)
+		PedSetActionNode(Pete, "/Global/1_11X2/CutPlan/Pete94", "1_11X2.act")
+		F_TextPrint("Pete: But what about me?", 2.5, 2600, 2)
 		CameraSetXYZ(262.47, -116.17, 7.42, 263.06, -112.23, 7.14)
-		PedSetActionNode(gPlayer, "/Global/5_04/PlayerScratch", "Act/Conv/5_04.act")
-		TextPrintString("Jimmy: Sorry, Pete, but I don't remember you at all.", 3.5, 2)
-		Wait(3600)
-		
+		PedSetActionNode(gPlayer, "/Global/5_04/PlayerScratch", "5_04.act")
+		F_TextPrint("Jimmy: Sorry, Pete, but I don't remember you at all.", 3.5, 3600, 2)
 		CameraSetXYZ(260.63, -113.12, 6.87, 264.22, -111.36, 6.73)
-		
 		PedMoveToXYZ(gPlayer, 0, 227.32, -73.80, 6.22)
 		GameSetPedStat(gPlayer, 20, 90)
 
-	Wait(350)
+	Wait(300)
 
 		PedMoveToXYZ(Gary6, 0, 227.32, -72.80, 6.22)
 		GameSetPedStat(Gary6, 20, 95)
 
-	Wait(350)
+	Wait(300)
 
 		PedMoveToXYZ(Pete, 0, 227.32, -71.80, 6.22)
 		GameSetPedStat(Pete, 20, 95)
@@ -1533,35 +1511,29 @@ EndingAndCredits = function()
 	Wait(3500)
 
 		CameraSetXYZ(279.37, -104.46, 7.54, 281.49, -101.09, 7.90)
-		PedSetActionNode(SimonBestia, "/Global/C31Strt/FattyAvoid", "Act/Conv/C3_1.act")
-		TextPrintString("SimonBestia: Deadpool-kun, Derpy-chan, arigatou for your help!", 4, 2)
-		Wait(4100)
+		PedSetActionNode(SimonBestia, "/Global/C31Strt/FattyAvoid", "C3_1.act")
+		F_TextPrint("SimonBestia: Deadpool-kun, Derpy-chan, arigatou for your help!", 4, 4100, 2)
 		CameraSetXYZ(279.15, -103.81, 7.33, 282.05, -106.56, 7.32)
-		PedSetActionNode(DeadpoolXYZ, "/Global/C4/Animations/Teacher/TeacherChew", "Act/Conv/C4.act")
-		TextPrintString("DeadpoolXYZ: Stop being a weeb.", 3, 2)
-		Wait(3100)
-		PedSetActionNode(DeadpoolXYZ, "/Global/2_01/Anim/EdnaShrug", "Act/Conv/2_01.act")
-		TextPrintString("DeadpoolXYZ: But yeah, no problem. :V", 3.3, 2)
-		Wait(3400)
+		PedSetActionNode(deadpoolXYZ, "/Global/C4/Animations/Teacher/TeacherChew", "C4.act")
+		F_TextPrint("deadpoolXYZ: Stop being a weeb.", 3, 3100, 2)
+		PedSetActionNode(deadpoolXYZ, "/Global/2_01/Anim/EdnaShrug", "2_01.act")
+		F_TextPrint("deadpoolXYZ: But yeah, no problem. :V", 3.3, 3400, 2)
 		CameraSetXYZ(279.99, -104.26, 7.52, 280.89, -108.13, 7.99)
-		PedSetActionNode(DeadpoolXYZ, "/Global/6_02/SchoolGatesNIS/Jimmy/Jimmy02", "Act/Anim/6_02.act")
-		TextPrintString("DeadpoolXYZ: To be honest, I was worried anyone could sneak into the office at any point.", 4.7, 2)
-		Wait(4800)
+		PedSetActionNode(deadpoolXYZ, "/Global/6_02/SchoolGatesNIS/Jimmy/Jimmy02", "6_02.act")
+		F_TextPrint("deadpoolXYZ: To be honest, I was worried anyone could sneak into the office at any point.", 4.7, 4800, 2)
 		CameraSetXYZ(280.93, -104.37, 7.62, 277.83, -106.90, 7.75)
-		PedSetActionNode(DeadpoolXYZ, "/Global/2_06/NISPINKY/Jimmy/Jimmy01", "Act/Conv/2_06.act")
-		TextPrintString("DeadpoolXYZ: But, I guess your script wasn't THAT much of a disaster.", 4, 2)
-		Wait(4100)
+		PedSetActionNode(deadpoolXYZ, "/Global/2_06/NISPINKY/Jimmy/Jimmy01", "2_06.act")
+		F_TextPrint("deadpoolXYZ: But I guess your script wasn't THAT much of a disaster.", 4, 4100, 2)
 		CameraSetXYZ(282.85, -103.41, 7.64, 279.52, -105.51, 6.97)
-		PedSetActionNode(Derpy54320, "/Global/PriOff/TargetAnimations/TargetPoint", "Act/Conv/PriOff.act")
-		TextPrintString("Derpy54320: Let's celebrate. Here, I brought the Bee Movie script.", 3.3, 2)
-		Wait(1500)
+		PedSetActionNode(Derpy54320, "/Global/PriOff/TargetAnimations/TargetPoint", "PriOff.act")
+		F_TextPrint("Derpy54320: Let's celebrate. Here, I brought the Bee Movie script.", 3.3, 1500, 2)
 		CameraSetXYZ(280.27, -105.14, 7.52, 284.21, -105.71, 7.15)
 		Wait(1500)
-		TextPrintString("Derpy54320: According to all known laws of aviation, there is no way a bee should...", 3, 2)
+		F_TextPrint("Derpy54320: According to all known laws of aviation, there is no way a bee should...", 3, 0, 2)
 		PedSetPosXYZ(SimonBestia, 271.73, -113.51, 6.20)
-		PedSetPosXYZ(DeadpoolXYZ, 270.52, -113.50, 6.20)
+		PedSetPosXYZ(deadpoolXYZ, 270.52, -113.50, 6.20)
 		Wait(2700)
-		PedMoveToXYZ(DeadpoolXYZ, 0, 270.36, -123.50, 7.87)
+		PedMoveToXYZ(deadpoolXYZ, 0, 270.36, -123.50, 7.87)
 		PedMoveToXYZ(SimonBestia, 0, 271.74, -123.42, 7.87)
 		Wait(300)
 		CameraSetXYZ(278.70, -106.53, 7.62, 280.75, -103.11, 7.26)
@@ -1570,21 +1542,17 @@ EndingAndCredits = function()
 		CameraSetXYZ(269.25, -110.99, 7.48, 270.99, -114.58, 7.61)
 		PedFaceXYZ(Derpy54320, 271.74, -123.42, 7.87)
 		Wait(2500)
-		CameraSetXYZ(279.52, -106.57, 7.22, 282.98, -104.56, 7.25)
-		
-	Wait(1250)
-		
+		CameraSetXYZ(279.52, -106.57, 7.22, 282.98, -104.56, 7.25)	
+		Wait(1250)
 		PedMoveToXYZ(Derpy54320, 0, 271.74, -123.42, 7.87)
-		
-	Wait(500)
-		
+		Wait(500)
 		CameraSetXYZ(288.71, -109.10, 11.66, 284.72, -109.21, 11.31)
 
 	Wait(100)
 
-		TextPrintString("And that was 'The Myth' my first custom mission!", 5, 1)
+		TextPrintString("And that was 'The Myth'\nmy first custom mission!", 5, 1)
 		Wait(5000)
-		TextPrintString("Special thanks to\nDeadpoolXYZ and Derpy54320 for helping through various parts in the mod!", 6, 1)
+		TextPrintString("Special thanks to\ndeadpoolXYZ and Derpy54320\n for helping on various parts in the mod!", 6, 1)
 		Wait(5900)
 		TextPrintString("Gary's werewolf model was made by CautiousYoung, I would've probably never made this mod if that didn't exist.", 7, 1)
 		GameSetPedStat(gPlayer, 20, 100)
@@ -1598,6 +1566,10 @@ EndingAndCredits = function()
 		Wait(6000)
 
 		MissionSucceed()
+
+		CameraFade(500, 0)
+
+		Wait(1000)
 
 end
 
@@ -1674,25 +1646,15 @@ end
 F_LoadAnims = function()
 
 	ActTreeTable = {
-		"Act/Conv/Chap5Trans.act",
-		"Act/Conv/PriOff.act",
-		"Act/Conv/C3_1.act",
-		"Act/Conv/Boss_Russell.act",
-		"Act/Conv/1_03.act",
-		"Act/Conv/2_04.act",
-		"Act/Conv/2_B.act",
-		"Act/Conv/2_S04.act",
-		"Act/Conv/3_B.act",
-		"Act/Conv/5_04.act"
+		"2_S04",
 	}
 	
 	for i, ActionTree in ActTreeTable, nil, nil do
-		LoadActionTree(ActionTree)
+		LoadActionTree(ActionTree..".act")
 	end
 
 	AnimGroupsTable = {
 		"2_S04CharSheets",
-		"Ambient",
 		"Ambient2",
 		"Ambient3",
 		"Area_Asylum",
@@ -1763,6 +1725,15 @@ F_LoadAnims = function()
 
 end
 
+F_TextPrint = function(Text, Time, WaitTime, Type)
+
+		TextPrintString(Text, Time, Type)
+		if not SkipText then
+			Wait(WaitTime)
+		end
+
+end
+
 F_ChangePlayerOutfit = function(OutfitName)
 
 		ClothingSetPlayerOutfit(OutfitName) --Changes the outfit to the specified one
@@ -1783,7 +1754,7 @@ T_StopMusic = function()
 end
 
 
---DeadpoolXYZ's functions
+--deadpoolXYZ's functions
 function SettingsMenu()
 
 		LoadAnimationGroup("4_04_FunhouseFun")
@@ -1804,7 +1775,7 @@ function SettingsMenu()
 
 	Wait(500)
 
-		PedSetActionNode(gPlayer, "/Global/404Conv/UseMonitor", "Act/Conv/4_04.act")
+		PedSetActionNode(gPlayer, "/Global/404Conv/UseMonitor", "4_04.act")
 
 	Wait(150)
 
@@ -1825,7 +1796,7 @@ function SettingsMenu()
 		repeat
 
 			TextPrintString(Title.."\n\n"..Setting.."\n"..options[Selection].text.."\n\n\n\n"..Instructions, 1, 1)
-			TextPrintString("\n\n\nAuthor:\nSimonBestia\n\nSpecial Thanks:\nDeadpoolXYZ & Derpy54320", 1, 2)
+			TextPrintString("\n\n\nAuthor:\nSimonBestia\n\nSpecial Thanks:\ndeadpoolXYZ & Derpy54320", 1, 2)
 
 			if IsButtonBeingPressed(0, 0) then
 				SoundPlay2D("NavDwn")
@@ -1858,7 +1829,7 @@ function SettingsMenu()
 	Wait(700)
 
 		PedSetEffectedByGravity(gPlayer, true)
-		ClockSet(22) --Self explanatory
+		ClockSet(22) --Self-explanatory
 		WeatherSet(2) --Sets the weather to rain
 		
 		if Selection <= 3 then
@@ -1875,22 +1846,24 @@ end
 
 function F_BikeChase()
 
+		AreaDisableCameraControlForTransition(true)
 		AreaTransitionXYZ(0, 212.74, -73.08, 8.59)
 		AreaDisableAllPatrolPaths()
 		SoundPlayStream("MS_FinalShowdown03Mid.rsm", MUSIC_DEFAULT_VOLUME)
+		AreaDisableCameraControlForTransition(false)
 		KartChase()
 
 end
 
 function F_BossFight()
 
-		AreaDisableCameraControlForTransition(true) --Disables the automatic camera fade in when using areatransitionxyz
+		AreaDisableCameraControlForTransition(true)
 		AreaTransitionXYZ(0, 64.54, -313.47, 0.37)
 		Gary2 = PedCreateXYZ(130, 72.65, -314.15, 0.65)
 		PedFaceXYZ(Gary2, 64.54, -313.47, 0.37)
 		Jimmy2Vehicle = VehicleCreateXYZ(277, 65.04, -315.82, 0.37)
 		Gary2Vehicle = VehicleCreateXYZ(289, 73.05, -315.37, 0.37)
-		AreaDisableCameraControlForTransition(false) --Enables it again
+		AreaDisableCameraControlForTransition(false)
 		PreBossBattleCutScene()
 
 end
@@ -1899,8 +1872,10 @@ end
 
 		AreaDisableCameraControlForTransition(true)
 		AreaTransitionXYZ(0, 68.57, -316.30, 0.35)
+		Gary4 = PedCreateXYZ(160, 69.27, -323.60, 0.35)
 		F_ChangePlayerOutfit("Mascot")
 		AreaDisableCameraControlForTransition(false)
+		CreateThread("T_GaryFightingStyle")
 		PreBossBattlePT2Cutscene()
 
 end]]
@@ -1910,18 +1885,17 @@ function T_GaryFightingStyle()
 Melee = {
 	{Anim = "/Global/BOSS_Darby/Offense/Short/Grapples/HeavyAttacks/Catch_Throw", Act = "BOSS_Darby.act"},
 	{Anim = "/Global/DO_Striker_A/Offense/Medium/HeavyAttacks/OverhandSwing", Act = "DO_Striker_A.act"},
-	{Anim = "/Global/Crazy_Basic/Offense/Medium/GrapplesNEW/GrapplesAttempt", Act = "Crazy_Basic.act"},
-	{Anim = "/Global/BOSS_Russell/Offense/GroundAttack/GroundStomp1", Act = "BOSS_Russell.act"},
+	{Anim = "/Global/Crazy_Basic/Offense/Medium/GrapplesNEW/GrapplesAttempt", Act = "Crazy_Basic.act"},--
+	{Anim = "/Global/BOSS_Russell/Offense/GroundAttack/GroundStomp1", Act = "BOSS_Russell.act"},--
 	{Anim = "/Global/BOSS_Russell/Defense/Evade/EvadeInterrupt/EvadeInterrupt", Act = "BOSS_Russell.act"},
 	{Anim = "/Global/G_Johnny/Offense/Special/SpecialActions/LightAttacks/Shin/HeavyAttacks/RoundHouseKick_L/AxeKicks", Act = "G_Johnny.act"},
 	{Anim = "/Global/G_Johnny/Default_KEY/RisingAttacks/HeavyAttacks/RisingAttacks", Act = "G_Johnny.act"}
 }
 
 Grapples = {
-	{Anim = "/Global/Actions/Grapples/Front/Grapples/GrappleMoves/PowerBomb/GIVE", Act = "Act/Anim/BOSS_Russell.act"},
-	{Anim = "/Global/Actions/Grapples/Front/Grapples/GrappleMoves/BearHug", Act = "Act/Anim/G_Grappler_A.act"},
-	{Anim = "/Global/WrestlingACT/Attacks/Grapples/Grapples/BackGrapples/Choke", Act = "WrestlingACT.act"},
-	{Anim = "/Global/Actions/Grapples/Mount/GrappleMoves/Spit/GIVE", Act = "B_Striker_A.act"}
+	{Anim = "/Global/Actions/Grapples/Front/Grapples/GrappleMoves/PowerBomb/GIVE", Act = "BOSS_Russell.act"},
+	{Anim = "/Global/Actions/Grapples/Front/Grapples/GrappleMoves/BearHug", Act = "G_Grappler_A.act"},
+	{Anim = "/Global/WrestlingACT/Attacks/Grapples/Grapples/BackGrapples/Choke", Act = "WrestlingACT.act"}
 }
 
 	Gary = Gary3
@@ -1939,7 +1913,7 @@ function CheckGary(Gary)
 	IsGrappling = false
 	
 	repeat
-	
+
 		if PedIsPerformingMove(Gary) and not IsAttacking then
 			if PedIsValid(Ghost) and PedGetHealth(Gary) <= 350 then
 				PedSetFlag(Gary, 13, true) --Attacks against Gary will deal damage, but won't affect him
@@ -1950,7 +1924,7 @@ function CheckGary(Gary)
 					IsAttacking = true
 					rand = math.random(1, table.getn(Melee))
 					PedSetActionNode(Gary, Melee[rand].Anim, Melee[rand].Act)
-					--TextPrintString("DEBUG Is attacking", 1, 2)
+					--TextPrintString("DEBUG: Is attacking", 1, 2)
 				end
 		elseif PedIsPerformingMove(Gary) and not IsAttacking then
 			IsAttacking = true
@@ -1958,20 +1932,29 @@ function CheckGary(Gary)
 		
 		if not PedIsPerformingMove(Gary) and IsAttacking then
 			IsAttacking = false
-			--TextPrintString("DEBUG Is not attacking", 1, 2)
+			--TextPrintString("DEBUG: Is not attacking", 1, 2)
 			Wait(1000)
 		end
 		
-		if PedIsPlaying(Gary, "/Global/Actions/Grapples/Front/Grapples/Hold_Idle/GrappleLoco/NPC/GIVE", true) and not IsGrappling and not IsAttacking then
+		if PedIsPlaying(Gary, "/Global/Actions/Grapples/Front/Grapples", true) and not IsGrappling and not IsAttacking then
 			IsGrappling = true
-			rand = math.random(1, table.getn(Grapples))
-			PedSetActionNode(Gary, Grapples[rand].Anim, Grapples[rand].Act)		
-			--TextPrintString("DEBUG Is grabbing", 1, 2)
+			RNG = math.random(2)
+			--TextPrintString("DEBUG: Value picked: "..RNG, 1, 2)
+			if RNG == 2 then
+				randg = math.random(1, table.getn(Grapples))
+				if not PedIsPlaying(Gary, "/Global/Grapples/Front/Grapples/GrappleMoves/DirectionalPush/PushFwd/RCV", true) and PedIsValid(PedGetGrappleTargetPed(Gary)) then
+					PedSetActionNode(Gary, Grapples[randg].Anim, Grapples[randg].Act)
+					--TextPrintString("DEBUG: Is grabbing", 1, 2)
+					repeat
+					Wait(0)
+					until not PedIsPlaying(Gary, Grapples[randg].Anim, true)
+				end
+			end
 		end
 		
 		if not PedIsValid(PedGetGrappleTargetPed(Gary)) and IsGrappling then
 			IsGrappling = false
-			--TextPrintString("DEBUG Is not grabbing", 1, 2)
+			--TextPrintString("DEBUG: Is not grabbing", 1, 2)
 		end		
 		
 		Wait(0)
@@ -2011,7 +1994,7 @@ function T_FailDistance()
 
 				F_ToggleHudElements(false)
 
-				if PlayerIsInAnyVehicle() then --Self explanatory
+				if PlayerIsInAnyVehicle() then --Self-explanatory
 					local X1, Y1, Z1 = PedGetOffsetInWorldCoords(gPlayer, -0.45, 1.35, 1.0000000476837)
 					local X2, Y2, Z2 = PedGetOffsetInWorldCoords(gPlayer, 0.45, -0.69999998807907, 0.8000000476837)
 					CameraSetXYZ(X1, Y1, Z1, X2, Y2, Z2)
@@ -2019,7 +2002,7 @@ function T_FailDistance()
 					local X1, Y1, Z1 = PedGetOffsetInWorldCoords(gPlayer, -0.45, 1.35, 1.5000000476837)
 					local X2, Y2, Z2 = PedGetOffsetInWorldCoords(gPlayer, 0.45, -0.69999998807907, 1.3000000476837)
 					CameraSetXYZ(X1, Y1, Z1, X2, Y2, Z2)
-					ExecuteActionNode(gPlayer, "/Global/1_11X2/Failure", "Act/Conv/1_11X2.act")
+					ExecuteActionNode(gPlayer, "/Global/1_11X2/Failure", "1_11X2.act")
 				end
 
 				ClearTextQueue()
