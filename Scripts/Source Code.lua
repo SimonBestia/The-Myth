@@ -271,7 +271,7 @@ RoofChase = function()
 		GameSetPedStat(GaryRoof, 20, 100)
 		F_GaryThrowBrick()
 		PedSetActionNode(GaryRoof, "/Global/Ambient/Scripted/Empty/EmptyNode/TrueEmptyNode", "Ambient.act")
-		PedMoveToXYZ(GaryRoof, 2, 186.77, -66.23, 30.29)
+		PedMoveToXYZ(GaryRoof, 1, 186.77, -66.23, 30.29)
 
 	Wait(1050)
 
