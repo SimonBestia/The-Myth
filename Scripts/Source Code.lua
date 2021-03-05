@@ -414,8 +414,11 @@ T_EasterEgg = function()
 		Wait(0)
 		until PlayerIsInAreaXYZ(-629.73, -281.07, 5.51, 1, 0)
 
-		MissionTimerStop()
+		AreaDisableCameraControlForTransition(true)
 		SoundStopStream() --Stops the current playing music
+		CameraFade(700, 0)
+		MissionTimerStop()
+		Wait(1500)
 		AreaTransitionXYZ(5, -701.15, 215.12, 31.55)
 		PlayerSetControl(0)
 		F_ToggleHudElements(false)
@@ -426,6 +429,7 @@ T_EasterEgg = function()
 
 	Wait(50)
 
+		AreaDisableCameraControlForTransition(false)
 		SoundPlayStream("MS_5-05_BurtonPee_NIS.rsm", MUSIC_DEFAULT_VOLUME)
 		CreatePersistentEntity("DRP_Arcade", -698.18, 204.84, 32.70, 90, 5) --Adds a model (X, Y, Z, Rotation, AreaID)
 		CreatePersistentEntity("OffLapTop", -703.46, 204.88, 32.67, 0, 5)
@@ -443,6 +447,7 @@ T_EasterEgg = function()
 
 	Wait(50)
 
+		CameraFade(500, 1)
 		CameraSetXYZ(-698.03, 203.35, 33.17, -700.63, 206.35, 32.74)
 		PedSetActionNode(SimonBestiaEG, "/Global/3_R09/Animations/Nerds/Nerds01", "3_R09.act")
 		PedSetActionNode(Derpy54320EG, "/Global/5_09/Anims/PeteSit", "5_09.act")
@@ -454,9 +459,9 @@ T_EasterEgg = function()
 		CameraSetXYZ(-700.67, 206.27, 33.15, -697.82, 203.52, 32.60)
 		PedFaceHeading(SimonBestiaEG, 90)
 		PedFaceHeading(deadpoolXYZEG, 45)
+		PedSetActionNode(SimonBestiaEG, "/Global/C31Strt/FattyAvoid", "C3_1.act")
 		F_TextPrint("SimonBestia: Come on, Derpy, there's no way anyone would come here, they have no reason to.", 5, 5200, 2)
 		Wait(250)
-		PedSetActionNode(SimonBestiaEG, "/Global/C31Strt/FattyAvoid", "C3_1.act")
 		PlayerSetPosXYZ(-701.21, 211.42, 31.55)
 		PedMoveToXYZ(gPlayer, 0, -701.21, 209.05, 31.55)
 		Wait(500)
@@ -494,7 +499,6 @@ T_EasterEgg = function()
 		PedMoveToXYZ(GaryEG, 0, -701.30, 211.37, 31.55)
 		CameraSetXYZ(-701.86, 208.93, 33.14, -701.02, 212.81, 32.63)
 		F_TextPrint("Gary: Hey Jimmy, stick to the script, we---", 2, 2000, 2)
-		Wait(2000)
 		PedFaceXYZ(gPlayer, -701.30, 211.37, 31.55)
 		CameraSetXYZ(-701.28, 209.94, 33.08, -701.46, 205.95, 33.00)
 		Wait(3500)
@@ -503,20 +507,19 @@ T_EasterEgg = function()
 		PedFaceXYZ(Derpy54320EG, -699.14, 205.15, 31.55)
 		PedSetActionNode(Derpy54320EG, "/Global/C7/TeacherDisgust", "C7.act")
 		PedSetActionNode(deadpoolXYZEG, "/Global/2_S04/Anim/Laugh", "2_04.act")
-		F_TextPrint("Derpy54320: Well, look who's wrong.", 2, 2200, 2)
 		SoundFadeoutAmbience()
-
+		F_TextPrint("Derpy54320: Well, look who's wrong.", 2, 2200, 2)
 		MusicCanNowStart = true
 		SoundPlayStream("FIGHT01F.rsm", MUSIC_DEFAULT_VOLUME)
 		CameraSetXYZ(-700.10, 206.32, 32.53, -697.85, 203.23, 33.70)
-		F_TextPrint("SimonBestia: LISTEN, YOU TWO.", 2, 2100, 2)
 		PedSetActionNode(SimonBestiaEG, "/Global/1_07/GoingDown", "1_07.act")
+		F_TextPrint("SimonBestia: LISTEN, YOU TWO.", 2, 2100, 2)
 		CameraSetXYZ(-699.92, 205.55, 33.17, -696.09, 204.40, 33.21)
 		F_TextPrint("SimonBestia: You guys are part of a videogame, you're not real.", 3, 3100, 2)
 		CameraSetXYZ(-699.57, 203.00, 33.75, -700.52, 206.80, 32.89)
-		F_TextPrint("SimonBestia: I don't know how you ended up here, but I have no choice, I have to erase your memories.", 5, 5100, 2)
-		PedFaceHeading(gPlayer, 180)
 		PedFaceXYZ(gPlayer, -699.14, 205.15, 31.55)
+		F_TextPrint("SimonBestia: I don't know how you ended up here, but I have no choice, I have to erase your memories.", 5, 5100, 2)
+		--PedFaceHeading(gPlayer, 180)
 
 		CameraSetXYZ(-700.91, 207.83, 33.09, -701.76, 211.68, 32.40)
 		PedMoveToXYZ(GaryEG, 0, -700.56, 209.47, 31.55)
@@ -528,13 +531,13 @@ T_EasterEgg = function()
 		PedFaceXYZ(Derpy54320EG, -701.21, 209.05, 31.55)
 
 		CameraSetXYZ(-699.83, 201.70, 34.02, -700.76, 205.41, 32.85)
-		F_TextPrint("SimonBestia: I have to erase your memories now, goodbye.", 3, 3100, 2)
 		PedSetActionNode(gPlayer, "/Global/1_06/HoboFly", "1_06.act")
 		PedSetActionNode(GaryEG, "/Global/1_06/HoboFly", "1_06.act")
+		F_TextPrint("SimonBestia: I have to erase your memories now, goodbye.", 3, 3100, 2)
 		EffectSetGymnFireOn(true) --Self-explanatory
 		CameraSetXYZ(-700.16, 206.28, 33.15, -697.33, 203.03, 33.01)
 		TextPrintString("SimonBestia: ZA WARUDO!", 2.5, 2)
-		TextPrintString("Translator Note: 'Za Warudo' means 'Make the game crash'.", 2.5, 1)
+		TextPrintString("Translator's Note: 'Za Warudo' means 'Make the game crash'.", 2.5, 1)
 		PedSetActionNode(SimonBestiaEG, "/Global/5_03/5_03_Johnny_In_Cell", "5_03.act")
 		Wait(1000)
 
@@ -848,6 +851,8 @@ BossBattle = function()
 		Wait(0)
 		until PedGetHealth(Gary3) < 85 or failed
 
+		PlayerSetInvulnerable(true)
+
 	Wait(100)
 
 		SoundDisableSpeech()
@@ -862,6 +867,7 @@ BossBattle = function()
 		PedSetActionNode(gPlayer, "/Global/Ambient/Scripted/Empty/EmptyNode/TrueEmptyNode", "Ambient.act")
 		PedStop(Gary3) --Both of these stop a ped
 		PedClearObjectives(Gary3)
+		PlayerSetInvulnerable(false)
 		Gary4 = PedCreateXYZ(160, 69.27, -323.60, 0.35)
 		
 	Wait(1700)
@@ -919,6 +925,9 @@ end
 PreBossBattlePT2Cutscene = function()
 
 		F_ToggleHudElements(false)
+		if not PedIsInAreaXYZ(Gary4, 69.27, -323.60, 0.35, 2, 0) then
+			PedSetPosXYZ(Gary4, 69.27, -323.60, 0.35)
+		end
 		
 	Wait(25)
 
@@ -1038,7 +1047,7 @@ BossBattlePT2 = function()
 		PedSetActionTree(Gary4, "/Global/Nemesis", "Nemesis.act")
 		PedSetAITree(Gary4, "/Global/GaryAI", "AI_Gary.act")
 		PedSetInfiniteSprint(Gary4, true)
-		PedSetHealth(Gary4, 650)
+		PedSetHealth(Gary4, 50)
 		GameSetPedStat(Gary4, 4, 650)
 		GameSetPedStat(Gary4, 8, 900)
 		GameSetPedStat(Gary4, 12, 400)
@@ -1048,7 +1057,7 @@ BossBattlePT2 = function()
 		GameSetPedStat(Gary4, 20, 170)
 		PedSetPedToTypeAttitude(Gary4, 13, 2)
 		PedSetDamageGivenMultiplier(Gary4, 2, 1.35)
-		PedSetDamageTakenMultiplier(Gary4, 0, 0)
+		--PedSetDamageTakenMultiplier(Gary4, 0, 0)
 		AddBlipForChar(Gary4, 0, 34, 4)
 		PedLockTarget(Gary4, gPlayer)
 		PedAttack(Gary4, gPlayer, 2)
@@ -1074,6 +1083,14 @@ BossBattlePT2 = function()
 		Wait(0)
 		until failed or not PedIsValid(Gary4) or PedIsDead(Gary4)
 
+		if PedIsDead(Gary4) then
+			for i, Ghosts in ipairs(GhostsTable) do
+				if PedIsValid(Ghosts.ped) then
+					PedSetActionNode(Ghosts.ped, "/Global/1_07/KO_COLLAPSE", "1_07.act")
+				end
+			end
+		end
+
 	Wait(500)
 
 		F_ToggleHudElements(false)
@@ -1094,7 +1111,8 @@ BossBattlePT2 = function()
 		BlipRemoveFromChar(Gary4)
 
 	Wait(1001)
-	
+
+		PlayerSetInvulnerable(false)
 		PedDelete(Gary4)
 		KeepPlayerInSquare(false)
 		OnPlayerDeath(nil)
@@ -1399,8 +1417,8 @@ PostBossBattleCutScene = function()
 		F_TextPrint("Jimmy: Yes, my name is Jimmy Hopkins. I believe you're looking for this individual.", 5, 5000, 2)
 		CameraSetXYZ(68.02, -327.68, 1.65, 70.18, -331.05, 2.20)
 		PedSetActionNode(Officer, "/Global/3_04/3_04_Anim/JohnnyIdle/JohnnyIdle", "3_04.act")
-		F_TextPrint("Officer: Yes, Gary Smith. He's probably going to remain in the Happy Volts Asylum for a long time.", 5, 5000, 2)
 		PedFaceXYZ(gPlayer, 69.40, -329.45, 0.30)
+		F_TextPrint("Officer: Yes, Gary Smith. He's probably going to remain in the Happy Volts Asylum for a long time.", 5, 5000, 2)
 		PedSetActionNode(Officer, "/Global/3_04/3_04_Anim/JohnnyIdle/Johnny2", "3_04.act")
 		F_TextPrint("Officer: Thank you for your help, Mr. Hopkins.", 4, 4050, 2)
 		PedSetActionNode(Officer, "/Global/Ambient/Scripted/Empty/EmptyNode/TrueEmptyNode", "Ambient.act")
@@ -1608,7 +1626,6 @@ MissionCleanup = function()
 			ClothingRestore() --Restores the clothing saved at the beginning
 			ClothingBuildPlayer()
 			PlayerSetHealth(200)
-			PlayerSetInvulnerable(false)
 			PedMakeTargetable(gPlayer, true)
 			Wait(5)
 			AreaTransitionXYZ(14, -508.42, 323.90, 31.41)
@@ -1654,9 +1671,6 @@ F_LoadAnims = function()
 
 	AnimGroupsTable = {
 		"2_S04CharSheets",
-		"Ambient2",
-		"Ambient3",
-		"Area_Asylum",
 		"Boxing",
 		"B_Striker",
 		"C_Wrestling",
@@ -1664,9 +1678,7 @@ F_LoadAnims = function()
 		"DO_Grap",
 		"DO_StrikeCombo",
 		"DO_Edgar",
-		"EnglishClass",
 		"DodgeBall",
-		"DodgeBall2",
 		"F_Crazy",
 		"F_Adult",
 		"F_Nerds",
@@ -1674,13 +1686,11 @@ F_LoadAnims = function()
 		"G_Grappler",
 		"G_Johnny",
 		"G_Striker",
-		"GEN_Social",
 		"JV_Asylum",
 		"LE_Orderly",
-		"MINICHEM",
+		"MINI_React",
 		"N2B Dishonerable",
 		"Nemesis",
-		"nerdBar1",
 		"NIS_1_04",
 		"NIS_1_11",
 		"NIS_2_06_1",
@@ -1691,16 +1701,9 @@ F_LoadAnims = function()
 		"NIS_3_R09_N",
 		"NIS_4_B2",
 		"NIS_6_03",
-		"NLock01A",
 		"NPC_Adult",
 		"NPC_AggroTaunt",
-		"NPC_Chat_1",
-		"NPC_Chat_2",
-		"NPC_Chat_F",
-		"NPC_Cheering",
-		"NPC_Love",
 		"NPC_Mascot",
-		"NPC_NeedsResolving",
 		"NPC_Principal",
 		"NPC_Shopping",
 		"NPC_Spectator",
@@ -1708,12 +1711,10 @@ F_LoadAnims = function()
 		"N_Striker",
 		"N_Striker_A",
 		"N_Striker_B",
-		"Px_Ladr",
 		"P_Grappler",
 		"P_Striker",
 		"Russell",
 		"Russell_PBomb",
-		"SCBell",
 		"Straf_Wrest",
 		"W_SpudGun"
 	}
@@ -1787,7 +1788,7 @@ function SettingsMenu()
 			{text = "Beginning", event = Intro},
 			{text = "Bike Chase", event = F_BikeChase},
 			{text = "Boss Fight", event = F_BossFight},
-			--{text = "DEBUG: Boss Fight PT2", event = F_BossFightPT2}
+			{text = "DEBUG: Boss Fight PT2", event = F_BossFightPT2}
 		}
 		
 		Selection = 1
@@ -1867,7 +1868,7 @@ function F_BossFight()
 
 end
 
---[[function F_BossFightPT2()
+function F_BossFightPT2()
 
 		AreaDisableCameraControlForTransition(true)
 		AreaTransitionXYZ(0, 68.57, -316.30, 0.35)
@@ -1877,15 +1878,15 @@ end
 		CreateThread("T_GaryFightingStyle")
 		PreBossBattlePT2Cutscene()
 
-end]]
+end
 
 function T_GaryFightingStyle()
 
 Melee = {
 	{Anim = "/Global/BOSS_Darby/Offense/Short/Grapples/HeavyAttacks/Catch_Throw", Act = "BOSS_Darby.act"},
 	{Anim = "/Global/DO_Striker_A/Offense/Medium/HeavyAttacks/OverhandSwing", Act = "DO_Striker_A.act"},
-	{Anim = "/Global/Crazy_Basic/Offense/Medium/GrapplesNEW/GrapplesAttempt", Act = "Crazy_Basic.act"},--
-	{Anim = "/Global/BOSS_Russell/Offense/GroundAttack/GroundStomp1", Act = "BOSS_Russell.act"},--
+	{Anim = "/Global/Crazy_Basic/Offense/Medium/GrapplesNEW/GrapplesAttempt", Act = "Crazy_Basic.act"},
+	{Anim = "/Global/BOSS_Russell/Offense/GroundAttack/GroundStomp1", Act = "BOSS_Russell.act"},
 	{Anim = "/Global/BOSS_Russell/Defense/Evade/EvadeInterrupt/EvadeInterrupt", Act = "BOSS_Russell.act"},
 	{Anim = "/Global/G_Johnny/Offense/Special/SpecialActions/LightAttacks/Shin/HeavyAttacks/RoundHouseKick_L/AxeKicks", Act = "G_Johnny.act"},
 	{Anim = "/Global/G_Johnny/Default_KEY/RisingAttacks/HeavyAttacks/RisingAttacks", Act = "G_Johnny.act"}
@@ -1941,12 +1942,18 @@ function CheckGary(Gary)
 			--TextPrintString("DEBUG: Value picked: "..RNG, 1, 2)
 			if RNG == 2 then
 				randg = math.random(1, table.getn(Grapples))
+				if randg == 3 then
+					PedSetFlag(Gary, 2, true)
+				end
 				if not PedIsPlaying(Gary, "/Global/Grapples/Front/Grapples/GrappleMoves/DirectionalPush/PushFwd/RCV", true) and PedIsValid(PedGetGrappleTargetPed(Gary)) then
 					PedSetActionNode(Gary, Grapples[randg].Anim, Grapples[randg].Act)
 					--TextPrintString("DEBUG: Is grabbing", 1, 2)
 					repeat
 					Wait(0)
 					until not PedIsPlaying(Gary, Grapples[randg].Anim, true)
+					if PedGetFlag(Gary, 2) then
+						PedSetFlag(Gary, 2, false)
+					end
 				end
 			end
 		end
