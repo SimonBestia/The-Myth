@@ -1,6 +1,6 @@
 --[[The Myth
 	*By SimonBestia
-		*Special Thanks to deadpoolXYZ and Derpy54320 for helping with the mod!
+	 *Special Thanks to deadpoolXYZ and Derpy54320 for helping with the mod!
 ]]
 
 --Debug-related
@@ -28,7 +28,7 @@ MissionSetup = function()
 	--HUD:
 		ToggleHUDComponentVisibility(0, false) --Doesn't show the troublemeter
 		F_ToggleHudElements(false) --Custom function
-		--PauseGameClock() --Self-explanatory, also removes its HUD
+		PauseGameClock() --Self-explanatory, also removes its HUD
 
 		--ForceStartMission("6_B") --Use on PS2 ONLY, to load the roof (causes crashes in case of death)
 
@@ -36,7 +36,7 @@ end
 
 ActualMissionSetup = function()
 
-	--Load All Animations
+	--Load necessary Animations
 		F_LoadAnims() --Custom function
 
 	--Audio stuff:
@@ -44,11 +44,11 @@ ActualMissionSetup = function()
 		SoundLoadBank("1_B.bnk")
 
 	--DAT stuff:
-		DATLoad("The_Myth.DAT", 2) --This loads a custom .dat file inside Trigger.img, the game can load custom .dat files
+		DATLoad("The_Myth.DAT", 2) --This loads a custom .dat file inside Trigger.img. The game can load custom .dat files
 
 	--Map doors:
 		AreaSetDoorLocked(TRIGGER._DT_tschool_RoofDoor, false) --Unlocks the roof door outside the school
-			
+
 	--Setup Player:
 		ClothingBackup() --Saves Jimmy's current clothes, needed to restore them later
 
@@ -282,7 +282,7 @@ RoofChase = function()
 		Wait(0)
 		until PedIsInAreaXYZ(GaryRoof, 182.08, -69.21, 26.10, 1.5, 0)
 
-		PedDelete(GaryRoof)
+		PedSetFlag(GaryRoof, 9, true) --Makes a ped vanish
 		BlipBackToSchool = BlipAddXYZ(182.16, -67.50, 26.10, 0, 3, 0, 0) --adds a blip. (X,Y,Z, icon, ground blip type, visibility, Unknown)]]
 
 end
@@ -351,7 +351,7 @@ SchoolChase = function()
 
 		MissionTimerStart(9) --Starts a 9 seconds countdown
 		BlipRemoveFromChar(Gary)
-		PedSetFlag(Gary, 9, true) --Makes a ped vanish, like a ghost
+		PedSetFlag(Gary, 9, true)
 		TerminateThread(T_MonitorGaryMarbles)
 		TextPrintString("Gary went outside, don't let him run away!", 3, 1)
 
@@ -1039,11 +1039,11 @@ BossBattlePT2 = function()
 		CreateThread("T_GhostsCanGoThroughWalls")
 		SoundEnableSpeech()
 		F_ToggleHudElements(true)
-	
+
 	Wait(1)
-	
+
 	--Setup Gary:
-		
+
 		PedSetActionTree(Gary4, "/Global/Nemesis", "Nemesis.act")
 		PedSetAITree(Gary4, "/Global/GaryAI", "AI_Gary.act")
 		PedSetInfiniteSprint(Gary4, true)
@@ -1061,7 +1061,7 @@ BossBattlePT2 = function()
 		AddBlipForChar(Gary4, 0, 34, 4)
 		PedLockTarget(Gary4, gPlayer)
 		PedAttack(Gary4, gPlayer, 2)
-		
+
 	--Setup Player:
 
 		PlayerSetHealth(200)
@@ -1076,9 +1076,9 @@ BossBattlePT2 = function()
 		CameraSetShot(1, "1_B_X", false)
 
 	Wait(500)
-	
+
 		TextPrintString("It's now or never! Finish him off!", 4, 1)
-	
+
 		repeat
 		Wait(0)
 		until failed or not PedIsValid(Gary4) or PedIsDead(Gary4)
@@ -1125,6 +1125,7 @@ BossBattlePT2 = function()
 		MissionCompleted = true
 		PostBossBattleCutScene()
 	end
+
 end
 
 T_GhostPicker = function()
@@ -1348,7 +1349,6 @@ PostBossBattleCutScene = function()
 		PedFaceXYZ(Gary5, 70.76, -321.11, 0.41)
 		PlayerSetPosXYZ(70.76, -324.23, 0.34)
 		Wait(100)
-		
 		PedSetActionNode(Gary5, "/Global/4_05/Anims/StealCostumeCut/KnockedOut", "4_05.act")
 		Wait(100)
 		CameraFade(2000, 1)
@@ -1358,48 +1358,48 @@ PostBossBattleCutScene = function()
 		PedMoveToXYZ(gPlayer, 0, 69.47, -322.28, 0.42)
 		Wait(1500)
 		PedSetActionNode(gPlayer, "/Global/3_B/Animation/Crouch/Crouch", "3_B.act")
-		
+
 	Wait(100)
-	
+
 		F_TextPrint("Jimmy: Who's the boss? ME! Got it?", 3, 3000, 2)
 		F_TextPrint("Gary: It's not over... not yet...", 3, 3100, 2)
-		
+
 		PoliceCar = VehicleCreateXYZ(295, 86.30, -364.89, 0.33)
 		Officer = PedCreateXYZ(97, 86.83, -366.97, 0.33)
-		
+
 	Wait(100)
-		
+
 		CameraAllowChange(true)
 		VehicleFaceHeading(PoliceCar, 60)
 		PedWarpIntoCar(Officer, PoliceCar) --Self-explanatory
 		CameraSetXYZ(68.89, -328.30, 2.08, 70.77, -332.45, 1.47) --(68.19, -326.90, 1.96, 69.71, -330.56, 1.40)
 		VehicleEnableEngine(PoliceCar, true) --Turns on the lights
 		VehicleSetEntityFlag(PoliceCar, 43, false)
-		
+
 	Wait(100)
-		
+
 		PedFaceXYZ(Gary5, 73.05, -315.37, 0.37)
 		VehicleEnableSiren(PoliceCar, true) --Turns on the siren
 		VehicleFollowPath(PoliceCar, PATH._POLICE)
 		VehicleSetCruiseSpeed(PoliceCar, 16)
-	
+
 		repeat
 		Wait(0)
 		until PedIsInAreaXYZ(Officer, 68.90, -328.57, 0.32, 4, 0)
 
 		VehicleStop(PoliceCar)
-		
+
 	Wait(500)
-		
+
 		VehicleEnableSiren(PoliceCar, false)
 		VehicleEnableEngine(PoliceCar, false) --Turns off the lights
-		
+
 	Wait(100)
-		
+
 		PedExitVehicle(Officer) --Self-explanatory
-		
+
 	Wait(1750)
-		
+
 		PedFaceXYZ(Officer, 70.46, -322.68, 0.34)
 		F_TextPrint("Officer: Hey, are you the one who made that call?", 4, 0, 2)
 		PedSetActionNode(Officer, "/Global/1_04/GaryPoint/GaryPointAnim", "1_04.act")
@@ -1408,12 +1408,12 @@ PostBossBattleCutScene = function()
 		PedSetActionNode(gPlayer, "/Global/3_B/Animation/Stand/Stand", "3_B.act")
 
 	Wait(300)
-		
+
 		CameraSetXYZ(66.37, -331.08, 2.12, 69.33, -328.50, 1.33)
 		PedMoveToXYZ(gPlayer, 0, 68.90, -328.57, 0.32)
-		
+
 	Wait(500)
-		
+
 		F_TextPrint("Jimmy: Yes, my name is Jimmy Hopkins. I believe you're looking for this individual.", 5, 5000, 2)
 		CameraSetXYZ(68.02, -327.68, 1.65, 70.18, -331.05, 2.20)
 		PedSetActionNode(Officer, "/Global/3_04/3_04_Anim/JohnnyIdle/JohnnyIdle", "3_04.act")
@@ -1422,11 +1422,11 @@ PostBossBattleCutScene = function()
 		PedSetActionNode(Officer, "/Global/3_04/3_04_Anim/JohnnyIdle/Johnny2", "3_04.act")
 		F_TextPrint("Officer: Thank you for your help, Mr. Hopkins.", 4, 4050, 2)
 		PedSetActionNode(Officer, "/Global/Ambient/Scripted/Empty/EmptyNode/TrueEmptyNode", "Ambient.act")
-		
+
 	Wait(50)
-		
+
 		PedMoveToXYZ(Officer, 0, 69.47, -322.28, 0.42)
-		
+
 	Wait(800)
 
 		HideGeneralHealthBar()
@@ -1435,19 +1435,19 @@ PostBossBattleCutScene = function()
 		PedLockTarget(gPlayer, Officer, 3)
 
 	Wait(2500)
-		
+
 		PedLockTarget(gPlayer, -1)
 		CameraSetXYZ(69.66, -320.50, 1.40, 68.82, -324.17, 2.75) --CameraSetXYZ(65.87, -328.93, 2.45,68.75, -326.27, 1.71)
 		PlayerFaceHeading(0, 1)
 		F_TextPrint("Officer: Get up, you monster.", 2, 0, 2)
 		Wait(500)
 		PedSetActionNode(Gary5, "/Global/4_B2/ReactionAnims/GetUpHard", "4_B2.act")
-		
+
 	Wait(4500)
-		
+
 		CameraFade(500, 0)
 		EndingAndCredits()
-		
+
 end
 
 EndingAndCredits = function()
@@ -1661,14 +1661,6 @@ end
 
 F_LoadAnims = function()
 
-	ActTreeTable = {
-		"2_S04",
-	}
-	
-	for i, ActionTree in ActTreeTable, nil, nil do
-		LoadActionTree(ActionTree..".act")
-	end
-
 	AnimGroupsTable = {
 		"2_S04CharSheets",
 		"Boxing",
@@ -1722,6 +1714,8 @@ F_LoadAnims = function()
 	for i, AnimationGroup in AnimGroupsTable, nil, nil do
 		LoadAnimationGroup(AnimationGroup)
 	end
+
+	LoadActionTree("2_S04.act")
 
 end
 
@@ -1780,6 +1774,7 @@ function SettingsMenu()
 	Wait(150)
 
 		CameraFade(500, 1)
+
 
 		Title = "The Myth"
 		Setting = "Start from:"
@@ -1911,7 +1906,7 @@ function CheckGary(Gary)
 
 	IsAttacking = false
 	IsGrappling = false
-	
+
 	repeat
 
 		if PedIsPerformingMove(Gary) and not IsAttacking then
@@ -1920,22 +1915,20 @@ function CheckGary(Gary)
 			else
 				PedSetFlag(Gary, 13, false)
 			end
-				if math.random(1) == 1 then
-					IsAttacking = true
-					rand = math.random(1, table.getn(Melee))
-					PedSetActionNode(Gary, Melee[rand].Anim, Melee[rand].Act)
-					--TextPrintString("DEBUG: Is attacking", 1, 2)
-				end
+			IsAttacking = true
+			rand = math.random(1, table.getn(Melee))
+			PedSetActionNode(Gary, Melee[rand].Anim, Melee[rand].Act)
+			--TextPrintString("DEBUG: Is attacking", 1, 2)
 		elseif PedIsPerformingMove(Gary) and not IsAttacking then
 			IsAttacking = true
 		end
-		
+
 		if not PedIsPerformingMove(Gary) and IsAttacking then
 			IsAttacking = false
 			--TextPrintString("DEBUG: Is not attacking", 1, 2)
 			Wait(1000)
 		end
-		
+
 		if PedIsPlaying(Gary, "/Global/Actions/Grapples/Front/Grapples", true) and not IsGrappling and not IsAttacking then
 			IsGrappling = true
 			RNG = math.random(2)
@@ -1957,12 +1950,12 @@ function CheckGary(Gary)
 				end
 			end
 		end
-		
+
 		if not PedIsValid(PedGetGrappleTargetPed(Gary)) and IsGrappling then
 			IsGrappling = false
 			--TextPrintString("DEBUG: Is not grabbing", 1, 2)
 		end		
-		
+
 		Wait(0)
 		until PedIsDead(Gary)
 
