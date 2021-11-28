@@ -237,7 +237,7 @@ RoofChase = function()
 
 		PedStop(GaryRoof)
 		PedFaceXYZ(GaryRoof, 205.48, -79.06, 35.69)
-		PedSetActionNode(GaryRoof, "/Global/Ambient/Scripted/Empty/EmptyNode/TrueEmptyNode", "Ambient.act")
+		PedSetActionNode(GaryRoof, "/Global/1_11X1/Animations/LaughCyclic/LaughCyclic", "1_11X1.act")
 
 		repeat
 		Wait(0)
@@ -819,7 +819,7 @@ BossBattle = function()
 
 		PedLockTarget(Gary3, gPlayer)
 		PedSetActionTree(Gary3, "/Global/Nemesis", "Nemesis.act") --Sets a fighting style
-		PedSetAITree(Gary3, "/Global/GaryAI", "Act/AI/AI_Gary.act") --Sets the ped's AI to a specific AI.
+		PedSetAITree(Gary3, "/Global/GaryAI", "AI_Gary.act") --Sets the ped's AI to a specific AI.
 		PedSetInfiniteSprint(Gary3, true)
 		GameSetPedStat(Gary3, 4, 400)
 		PedSetHealth(Gary3, 400)
@@ -1086,6 +1086,7 @@ BossBattlePT2 = function()
 		if PedIsDead(Gary4) then
 			for i, Ghosts in ipairs(GhostsTable) do
 				if PedIsValid(Ghosts.ped) then
+					GameSetPedStat(Ghosts.ped, 20, 95)
 					PedSetActionNode(Ghosts.ped, "/Global/1_07/KO_COLLAPSE", "1_07.act")
 				end
 			end
@@ -1137,7 +1138,7 @@ T_GhostPicker = function()
 				Wait(2500)
 				if not PedIsDead(Gary4) then
 					X, Y, Z = PedGetOffsetInWorldCoords(gPlayer, 2.5, 2.5, 0)
-					GhostPickerRNG = math.random(1, 2) --The game gets a random number between 1 and 2
+					GhostPickerRNG = math.random(2) --The game gets a random number between 1 and 2
 					Wait(100)
 					EffectSetGymnFireOn(true)
 					GameSetPedStat(Gary4, 5, 500)
@@ -1674,6 +1675,7 @@ F_LoadAnims = function()
 		"F_Crazy",
 		"F_Adult",
 		"F_Nerds",
+		"F_Jocks",
 		"Grap",
 		"G_Grappler",
 		"G_Johnny",
@@ -1793,13 +1795,13 @@ function SettingsMenu()
 			TextPrintString(Title.."\n\n"..Setting.."\n"..options[Selection].text.."\n\n\n\n"..Instructions, 1, 1)
 			TextPrintString("\n\n\nAuthor:\nSimonBestia\n\nSpecial Thanks:\ndeadpoolXYZ & Derpy54320", 1, 2)
 
-			if IsButtonBeingPressed(0, 0) then
+			if F_IsButtonPressedWithDelayCheck(0, 0) then
 				SoundPlay2D("NavDwn")
 				Selection = Selection - 1
 				if Selection < 1 then
 					Selection = table.getn(options)
 				end
-			elseif IsButtonBeingPressed(1, 0) then
+			elseif F_IsButtonPressedWithDelayCheck(1, 0) then
 				SoundPlay2D("NavUp")
 				Selection = Selection + 1
 				if Selection > table.getn(options) then
