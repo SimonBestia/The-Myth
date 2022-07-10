@@ -111,6 +111,7 @@ MissionCleanup = function()
 			end
 		end
 
+		SoundEnableSpeech()
 		SoundEnableSpeech_ActionTree() -- Like SoundDisableSpeech_ActionTree
 		FollowCamDefaultFightShot() -- Restores the default fight camera
 		CameraSetWidescreen(false)
